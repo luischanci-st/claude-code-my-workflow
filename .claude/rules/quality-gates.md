@@ -1,8 +1,9 @@
 ---
 paths:
-  - "Slides/**/*.tex"
-  - "Quarto/**/*.qmd"
+  - "Edit/**/*.tex"
+  - "Chkb/**/*.jl"
   - "scripts/**/*.R"
+  - "Chkb/**/*.R"
 ---
 
 # Quality Gates & Scoring Rubrics
@@ -10,22 +11,32 @@ paths:
 ## Thresholds
 
 - **80/100 = Commit** -- good enough to save
-- **90/100 = PR** -- ready for deployment
+- **90/100 = PR** -- ready for review
 - **95/100 = Excellence** -- aspirational
 
-## Quarto Slides (.qmd)
+## LaTeX Manuscript (.tex)
 
 | Severity | Issue | Deduction |
 |----------|-------|-----------|
-| Critical | Compilation failure | -100 |
-| Critical | Equation overflow | -20 |
-| Critical | Broken citation | -15 |
+| Critical | pdflatex compilation failure | -100 |
+| Critical | Undefined citation | -15 |
 | Critical | Typo in equation | -10 |
-| Major | Text overflow | -5 |
-| Major | TikZ label overlap | -5 |
-| Major | Notation inconsistency | -3 |
-| Minor | Font size reduction | -1 per slide |
+| Critical | Overfull hbox > 10pt | -10 |
+| Major | Notation inconsistency | -5 |
+| Major | Missing or incorrect table/figure reference | -5 |
 | Minor | Long lines (>100 chars) | -1 (EXCEPT documented math formulas) |
+| Minor | Inconsistent formatting | -1 |
+
+## Julia Scripts (.jl)
+
+| Severity | Issue | Deduction |
+|----------|-------|-----------|
+| Critical | Syntax errors / module won't load | -100 |
+| Critical | Convergence failure not handled | -30 |
+| Critical | Hardcoded absolute paths | -20 |
+| Major | Missing `@everywhere` for parallel code | -10 |
+| Major | Type instability in hot loops | -5 |
+| Minor | Long lines in non-mathematical code | -1 |
 
 ## R Scripts (.R)
 
@@ -34,16 +45,8 @@ paths:
 | Critical | Syntax errors | -100 |
 | Critical | Domain-specific bugs | -30 |
 | Critical | Hardcoded absolute paths | -20 |
-| Major | Missing set.seed() | -10 |
 | Major | Missing figure generation | -5 |
-
-## Beamer Slides (.tex)
-
-| Severity | Issue | Deduction |
-|----------|-------|-----------|
-| Critical | XeLaTeX compilation failure | -100 |
-| Critical | Undefined citation | -15 |
-| Critical | Overfull hbox > 10pt | -10 |
+| Major | Incorrect variable deflation | -10 |
 
 ## Enforcement
 
@@ -58,10 +61,9 @@ Save to `quality_reports/merges/YYYY-MM-DD_[branch-name].md`.
 
 ## Tolerance Thresholds (Research)
 
-<!-- Customize for your domain -->
-
 | Quantity | Tolerance | Rationale |
 |----------|-----------|-----------|
-| Point estimates | [e.g., 1e-6] | [Numerical precision] |
-| Standard errors | [e.g., 1e-4] | [MC variability] |
-| Coverage rates | [e.g., +/- 0.01] | [MC with B reps] |
+| Point estimates (β, ρ, σ) | < 1e-6 | Numerical precision of optimization |
+| Standard errors | < 1e-4 | Wild bootstrap MC variability (B=50) |
+| Significance stars | Exact match | Discrete classification must agree |
+| Inefficiency estimates | < 1e-5 | JLMS computation through spatial filter |

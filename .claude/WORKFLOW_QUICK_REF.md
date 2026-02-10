@@ -32,10 +32,9 @@ Repeat
 ## I Just Execute When
 
 - Code fix is obvious (bug, pattern application)
-- Verification (tolerance checks, tests, compilation)
+- Verification (tolerance checks, compilation, Julia/R runs)
 - Documentation (logs, commits)
 - Plotting (per established standards)
-- Deployment (after you approve, I ship automatically)
 
 ---
 
@@ -48,26 +47,21 @@ Repeat
 
 ---
 
-## Non-Negotiables (Customize These)
+## Non-Negotiables
 
-<!-- Replace with YOUR project's locked-in preferences -->
-
-- [YOUR PATH CONVENTION] (e.g., `here::here()` for R, relative paths for LaTeX)
-- [YOUR SEED CONVENTION] (e.g., `set.seed()` once at top for stochastic code)
-- [YOUR FIGURE STANDARDS] (e.g., white bg, 300 DPI, custom theme)
-- [YOUR COLOR PALETTE] (e.g., institutional colors)
-- [YOUR TOLERANCE THRESHOLDS] (e.g., 1e-6 for point estimates)
+- **Path convention:** Relative paths from `banking1/`; `here::here()` for R scripts
+- **Seed convention:** Not applicable — GMM is deterministic; wild bootstrap uses Mammen two-point weights
+- **Figure standards:** White background, 300 DPI, PDF format for paper, publication-quality
+- **Tolerance thresholds:** 1e-6 for point estimates (β, ρ, σ); 1e-4 for SEs (bootstrap variability)
 
 ---
 
 ## Preferences
 
-<!-- Fill in as you discover your working style -->
-
-**Visual:** [How you want figures/plots handled]
-**Reporting:** [Concise bullets? Detailed prose? Details on request?]
+**Visual:** PDF figures, white background, journal-standard dimensions (6.5" x 4.5")
+**Reporting:** Concise bullets; flag near-misses in replication
 **Session logs:** Always (post-plan, incremental, end-of-session)
-**Replication:** [How strict? Flag near-misses?]
+**Replication:** Strict — flag any deviation; exact match for significance stars
 
 ---
 

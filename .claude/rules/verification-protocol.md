@@ -1,53 +1,57 @@
 ---
 paths:
-  - "Slides/**/*.tex"
-  - "Quarto/**/*.qmd"
-  - "docs/**"
+  - "Edit/**/*.tex"
+  - "Chkb/**/*.jl"
+  - "Chkb/**/*.R"
+  - "scripts/**/*.R"
 ---
 
 # Task Completion Verification Protocol
 
 **At the end of EVERY task, Claude MUST verify the output works correctly.** This is non-negotiable.
 
-## For Quarto/HTML Slides:
-1. Run `./scripts/sync_to_docs.sh` (or `./scripts/sync_to_docs.sh LectureN`) to render and deploy
-2. Open the HTML in browser: `open docs/slides/LectureX.html`
-3. Verify images display by reading 2-3 image files to confirm valid content
-4. Check HTML source for correct image paths
-5. Check for overflow by scanning dense slides
-6. Verify environment parity: every Beamer box environment has a CSS equivalent in the QMD
-7. Report verification results
+## For LaTeX Paper (Edit/performance.tex):
+1. Compile with pdflatex (3-pass + bibtex):
+   ```bash
+   cd Edit && pdflatex -interaction=nonstopmode performance.tex
+   bibtex performance
+   pdflatex -interaction=nonstopmode performance.tex
+   pdflatex -interaction=nonstopmode performance.tex
+   ```
+2. Check for overfull hbox warnings
+3. Check for undefined citations or missing references
+4. Verify PDF was generated with non-zero size
 
-## For LaTeX/Beamer Slides:
-1. Compile with xelatex and check for errors
-2. Open the PDF to verify figures render
-3. Check for overfull hbox warnings
+## For Julia Scripts (Chkb/*.jl):
+1. Verify module loads without errors:
+   ```bash
+   julia -e "include(\"Chkb/Chkb.jl\"); using .Chkb"
+   ```
+2. For full pipeline: run `julia Chkb/main.jl` (caution: long-running)
+3. Check that `Chkb/Outcomes/Includes/` contains expected output files
+4. Verify `.txt` files contain numeric values (not NaN or errors)
+5. Verify `.rds` files have non-zero size
 
-## For TikZ Diagrams in HTML/Quarto:
-1. Browsers **cannot** display PDF images inline — ALWAYS convert to SVG
-2. Use SVG (vector format) for crisp rendering: `pdf2svg input.pdf output.svg`
-3. **NEVER use PNG for diagrams** — PNG is raster and looks blurry
-4. Verify SVG files contain valid XML/SVG markup
-5. Copy SVGs to `docs/Figures/LectureX/` via `sync_to_docs.sh`
-6. **Freshness check:** Before using any TikZ SVG, verify extract_tikz.tex matches current Beamer source
+## For R Scripts (Chkb/dataprocessing.R):
+1. Run `Rscript Chkb/dataprocessing.R`
+2. Verify `.Rda` files created in `Chkb/Data/Processed/`
+3. Spot-check: panel dimensions, bank count, time period coverage
 
-## For R Scripts:
-1. Run `Rscript scripts/R/filename.R`
-2. Verify output files (PDF, RDS) were created with non-zero size
-3. Spot-check estimates for reasonable magnitude
+## For Bibliography (Edit/banking.bib):
+- Check that all `\cite` references in `performance.tex` have entries in `banking.bib`
+- Verify no duplicate keys
 
 ## Common Pitfalls:
-- **PDF images in HTML**: Browsers don't render PDFs inline → convert to SVG
-- **Relative paths**: `../Figures/` works from `Quarto/` but not from `docs/slides/` → use `sync_to_docs.sh`
-- **Assuming success**: Always verify output files exist AND contain correct content
-- **Stale TikZ SVGs**: extract_tikz.tex diverges from Beamer source → always diff-check
+- **RCall interop**: Julia's RCall may fail if R libraries aren't installed system-wide
+- **Path separators**: Windows uses `\` but Julia/R often need `/` — use `joinpath()` in Julia
+- **Spatial weight matrices**: Must be row-normalized; check `all_W_df_Tot.Rda` dimensions match panel
+- **Bootstrap timing**: Wild bootstrap with B=50 takes significant time — don't run unnecessarily
 
 ## Verification Checklist:
 ```
 [ ] Output file created successfully
-[ ] No compilation/render errors
-[ ] Images/figures display correctly
-[ ] Paths resolve in deployment location (docs/)
-[ ] Opened in browser/viewer to confirm visual appearance
+[ ] No compilation/execution errors
+[ ] Figures/tables display correctly
+[ ] Parameter estimates within expected ranges
 [ ] Reported results to user
 ```
