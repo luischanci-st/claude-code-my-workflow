@@ -1,0 +1,56 @@
+% Here: some sketch of notes (to erase later)
+
+
+%%%%%%%%%%%%
+% Some stuff I wrote in 2024-2 when exploring implementing Simar and Wilson first.
+
+\subsection{Estimation strategy}
+
+Let $\widetilde{W}_t(\rho) = (I_N - \rho W_t)^{-1}$. Under the distributional assumptions, the second central moment associated with the variance-covariance matrix $\Sigma$ is given by:
+
+\begin{eqnarray}
+\Sigma_t = \widetilde{W}_t(\rho) \, \text{diag}\left( (1 - 2/\pi) \sigma_u^2 + \sigma_v^2 \right) \widetilde{W}_t(\rho)',
+\label{eq:varcov}
+\end{eqnarray}
+
+and, specifically, the variance can be expressed as:
+
+\begin{eqnarray}
+r^2_t = \left( (1 - 2/\pi) \sigma_u^2 + \sigma_v^2 \right) \widetilde{W}_t(\rho)^{\circ 2} \cdot i_N,
+\label{eq:2mom}
+\end{eqnarray}
+
+where $\widetilde{W}_t(\rho)^{\circ 2}$ is the Hadamard product, or element-wise product, denoted as $\widetilde{W}_t(\rho) \odot \widetilde{W}_t(\rho)$, and $i_N$ is an $N \times 1$ vector of ones.
+
+Similarly, the third moment is given by:
+
+\begin{eqnarray}
+r^3_t = \left(\frac{\pi}{2}\right)^{1/2} \left(1 - \frac{4}{\pi}\right) \sigma_u^3 \, \widetilde{W}_t(\rho)^{\circ 3} \cdot i_N,
+\label{eq:3mom}
+\end{eqnarray}
+
+allowing us to obtain estimates of $\hat{r}_t^2$ and $\hat{r}_t^3$ from the first stage and use the moment conditions to compute the parameters. The specific steps are as follows:
+
+First, we adopt the computational framework commonly used for estimating spatial econometric models, as outlined by \citet{pace1997}, \citet{lesage2009}, and \citet{Elhorst2014}. While these studies consider models related to ours, they construct the matrix $W$ based on geographical distance, whereas our approach utilizes interbank loan data. In both frameworks, $W$ is row-normalized, requiring that $(I_N - \rho W)$ is invertible, which is satisfied when $|\rho| < 1$. We define a vector of values for $\rho$ within the interval $\left[\rho_{min}, \rho_{max}\right]$, incrementing $\rho$ by 0.001 within this range.
+
+Second, for a given value of $\rho$, the third moments in equation \eqref{eq:3mom} and the L-2 norm are used to estimate $\sigma_u$ as follows:
+
+\begin{eqnarray}
+\hat{\sigma}_u = \underset{\sigma_u}{\mathop{\mathrm{arg\,min}}} 
+\sum_t m_{3,t}'m_{3,t}
+\hspace{0.5cm};\hspace{0.5cm}
+m_{3,t} = \left( \hat{r}^3_t - \sqrt{\frac{\pi}{2}} \left(1 - \frac{4}{\pi}\right) \sigma_u^3 \, \widetilde{W}_t(\rho)^{\circ 3} \cdot i_N \right).
+\end{eqnarray}
+
+Third, using the estimated value of $\sigma_u$ and the given $\rho$, the variances in equation \eqref{eq:2mom} and the L-2 norm are employed to compute $\sigma_v$ as follows:
+
+\begin{eqnarray}
+\hat{\sigma}_v = \underset{\sigma_v}{\mathop{\mathrm{arg\,min}}} 
+\sum_t m_{2,t}'m_{2,t}
+\hspace{0.5cm};\hspace{0.5cm}
+m_{2,t} = \left( \hat{r}^2_t - \left( \sigma_v^2 + \left(1 - 2/\pi\right)\sigma_u^2 \right) \widetilde{W}_t(\rho)^{\circ 2} \cdot i_N \right).
+\end{eqnarray}
+
+Lastly, the complete variance-covariance matrix in equation \eqref{eq:varcov} is used with the Frobenius norm to optimize the estimate of $\rho$.
+
+%%%%%%%%%%%%

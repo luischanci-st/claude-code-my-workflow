@@ -1,0 +1,757 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[12pt]{article}
+\usepackage{mathtools,nth,setspace,float,multirow,dsfont,booktabs,threeparttable,natbib,caption,rotating,fp,pdflscape,bm,xcolor,graphicx,amsmath,amssymb,comment,subcaption}
+
+\usepackage[left=2.5cm,top=3cm,right=2.5cm,bottom=3cm,bindingoffset=0.5cm]{geometry}
+
+\usepackage{hyperref}% Hyperref Setup
+ \definecolor{myred}{rgb}{0.55,0.1,0}
+ \definecolor{myblu}{rgb}{0,0.1,0.75}		
+ \hypersetup{ 
+  pdfauthor ={Chanci},   
+  colorlinks=true,
+  linkcolor =myblu,
+  citecolor =myred,
+  urlcolor  =myblu
+ }
+
+\usepackage[titletoc,title]{appendix}% Appendix
+\renewcommand\appendixname{Appendix}
+\newcommand{\Ed}[1]{\textcolor{red}{#1}}% Red text command
+\usepackage{newtxtext,newtxmath}% Font: newtxtext + newtxmath (Times-like)
+\newcommand{\inpmod}[1]{\input{includes/#1.txt}}% Custom input command
+\setstretch{1.15}% Line spacing
+\usepackage{fix-cm} % (to avoid minor remarks or notes from overaleaf regarding the space)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title{
+    Interconnectedness and Banking Performance: Insights from the Interbank Lending Market in Chile
+    \footnote{
+    Notes: 
+    (1) The regulatory authority of Chile, \emph{Comisión para el Mercado Financiero} (CMF), kindly provided data through the Call for Research Projects 2024.   
+    The views, findings, and conclusions expressed herein are solely those of the authors and do not necessarily represent those of the CMF. All errors and omissions are the responsibility of the authors.
+    %(Las opiniones, hallazgos y conclusiones expresadas en este documento son de exclusiva responsabilidad del los autores y no representan necesariamente la visión de la Comisión para el Mercado Financiero (CMF) de Chile. Cualquier error u omisión es responsabilidad del(los) autor(es).).
+    (2) This research has benefited greatly from the valuable feedback of Sofía Bauducco and participants at the CMF Annual Meeting and the Encuentro de la Sociedad de Economía Chilena (SECHI). Luis Chanci gratefully acknowledges financial support from the Agencia Nacional de Investigación y Desarrollo (ANID) through the Fondecyt Iniciación en Investigación project No. 11250893.
+    (3) Contact information. Luis: Universidad Santo Tom\'as, Chile, \href{mailto:luischanci@santotomas.cl}{\textit{luischanci@santotomas.cl}}; Subal: Binghamton University, USA, \href{mailto:kkar@binghamton.edu}{\textit{kkar@binghamton.edu}}; Paulo: CMF, Chile, \href{mailto:pbobadilla@cmfchile.cl}{\textit{pbobadilla@cmfchile.cl}}.
+    }
+}
+\author{
+    Luis Chanci%\thanks{
+	%Escuela de Ingenier\'ia Comercial, Facultad de Econom\'ia y Negocios, Universidad Santo Tom\'as, Chile. Email: \href{mailto:luischanci@santotomas.cl}{\textit{luischanci@santotomas.cl}}.}
+    \and 
+    Subal C. Kumbhakar%\thanks{
+	%Binghamton University, USA. Email: \href{mailto:kkar@binghamton.edu}{\textit{kkar@binghamton.edu}}.}
+    \and 
+    Paulo Bobadilla%\thanks{
+	%Comisi\'on Para el Mercado Financiero, Chile. Email: \href{mailto:pbobadilla@cmfchile.cl}{\textit{pbobadilla@cmfchile.cl}}.}
+}
+\date{(This version: December 2025. Comments are welcome.)}
+
+\maketitle
+\thispagestyle{empty}
+\setcounter{page}{0}
+
+\begin{abstract}
+Financial networks are typically studied for their role in propagating shocks, yet much less is known about how these linkages shape banks' routine operational performance. This paper examines whether interconnectedness in the interbank lending market affects cost efficiency. Using confidential administrative data from the Chilean banking sector (2008–2020), we map the ``physical'' network of bilateral exposures and estimate a network-augmented stochastic cost frontier through a two-step GMM framework adapted to the multi-output structure of banking. We find that interconnectedness is a statistically significant determinant of performance. Specifically, we estimate a negative network dependence parameter, suggesting that stronger network ties are associated with higher cost efficiency in the Chilean market. Decomposing total inefficiency, we find that network effects account for a median reduction of approximately \inpmod{p50EG} percentage points in cost inefficiency relative to the idiosyncratic component. These results provide novel empirical evidence that interbank networks influence not only the propagation of financial shocks but also the underlying operational performance of banks. The findings highlight the importance of monitoring the structure of financial networks as a key element of both stability analysis and performance evaluation.
+
+%While interconnections between banks are crucial for financial stability, they can also shape industry performance by providing the setting for group-level patterns to emerge—driven by dynamics such as herding, benchmarking, or peer interactions.
+%This paper examines the less-explored link between interconnectedness, measured through the interbank lending market, and banking efficiency. Using detailed confidential administrative records of Chilean banks’ interbank loans and balance sheets (2008–2020), we construct time-varying interbank lending networks. We employ a novel two-step GMM stochastic frontier approach that incorporates network dependence to estimate bank-level cost efficiency. 
+%Our findings indicate that interconnectedness is a statistically significant factor influencing cost efficiency. Specifically, we estimate a negative average network dependence parameter, suggesting that network connections are associated with improved cost efficiency (i.e., reduced inefficiency) in the Chilean case. Decomposing total inefficiency, we find that network effects account for a median reduction of approximately \inpmod{p50EG}percentage points in cost inefficiency relative to idiosyncratic inefficiency. This result adds a layer to the need for policymakers to monitor banking networks, not only for their role in financial contagion but also for their potential influence on industry performance.
+\end{abstract}
+\small 
+\textbf{JEL codes:} G21, D24, C23, L14, G01. \\ 
+\textbf{Keywords:} Banking Interconnections, Interbank Market, Cost Efficiency, Peer Effects, Chile.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Introduction}
+Financial system outcomes emerge primarily from interaction patterns rather than isolated institutional behavior. In banking, the configuration of interbank linkages shapes how information, liquidity, and shocks propagate, with implications extending far beyond systemic fragility to potentially shape routine operational performance. However, while existing research and policy debates prioritize stability and risk contagion, considerably less attention has been devoted to how interconnectedness influences banks’ performance and productivity during periods of relative calm. This paper examines whether the structure of interbank lending relationships affects cost performance. Specifically, we ask: does interconnectedness, defined by interbank lending network structures, systematically influence operational cost efficiency?
+
+Network ties may act as conduits for strategic interaction and information flow. First, imitation and herding mechanisms may enable banks to economize on information acquisition costs. Second, direct connections can facilitate social learning, allowing banks to benchmark their efficiency against the operational successes or failures of their counterparties. Finally, the broader network topology may influence market power and the diffusion speed of best practices. Through these potential channels, interconnectedness not only propagates risk but may also shape the cost structure of the banking sector.
+
+Despite plausible theoretical foundations, empirical evidence linking interbank relationships to broader banking performance remains limited. This gap stems from both data and methodological challenges. Granular data that traces specific bilateral linkages, crucial for mapping the transmission of shocks to individual balance sheets, is typically confidential and difficult to access. Consequently, prior research has often relied on aggregation, simulations, or imperfect proxies like geographical distance, which often obscure the true topology of financial interdependence. Furthermore, identifying causal effects on efficiency within complex endogenous networks poses econometric challenges that standard models often fail to mitigate.
+
+To overcome these empirical challenges, we leverage a unique administrative dataset from the Chilean banking sector alongside advanced efficiency modeling techniques. The data, obtained directly from the financial market regulator\footnote{The \emph{Comisión para el Mercado Financiero} (CMF).}, include detailed transaction records from the interbank lending market (Form C-18) linked with monthly balance sheets and other bank-level controls for nearly all institutions operating in the country between 2008 and 2020. This rich panel, based on observed lending relationships rather than correlation-based proxies, enables us to construct network adjacency matrices that accurately capture the intensity and relevance of interbank connections.
+
+Methodologically, we employ a two-step Generalized Method of Moments (GMM) estimation approach, building on recent advances in stochastic frontier (SF) analysis with spatial dependencies \citep[e.g.,][]{hou2023, chanci2024}. We specify the SF model as a stochastic cost frontier, consistent with the assumption of cost-minimizing behavior in banking institutions. Unlike standard spatial approaches that proxy connectivity using geographic distance, our analysis incorporates weighting matrices derived from interbank lending data to measure financial interdependence directly. This strategy allows us to estimate bank-level cost efficiency using a flexible translog specification that explicitly accounts for interbank network structures while controlling for unobserved heterogeneity.
+
+Our empirical analysis centers on the network dependence parameter ($\rho$), which quantifies the equilibrium relationship between a bank’s operational efficiency and that of its counterparties. We interpret this parameter through the lens of the social interaction literature, specifically targeting the endogenous peer effect described by \citet{manski1993}. Identifying such effects is inherently difficult due to the ``reflection problem,'' where observed correlations in outcomes may stem from similarities in characteristics (contextual effects) or exposure to common shocks (correlated effects) rather than direct influence. Our two-step estimation strategy is designed to mitigate these confounding factors. First, the stochastic cost frontier conditions on a comprehensive set of bank-specific cost drivers, including output mix, input prices, and risk capital, alongside time-fixed effects. This step effectively purges the inefficiency term of observable contextual variation and aggregate common shocks before network dependence is estimated. Second, the GMM estimator leverages the distinct, non-universal topology of the interbank network to identify $\rho$ from the moment conditions of the variance-covariance structure. Consequently, while we interpret the results with caution given the lack of exogenous variation from a natural experiment, this framework isolates a robust measure of endogenous network dependence that is distinct from simple sorting or environmental correlations.
+
+The results indicate that the Chilean banking system operates with relatively high levels of cost efficiency, and that these outcomes are systematically influenced by interbank linkages. The estimated network dependence parameter ($\hat{\rho} \approx \inpmod{rho_round}$) is negative, suggesting that ties in the interbank lending network correspond, on average, to lower inefficiency (i.e., higher cost efficiency). To assess the economic magnitude of this relationship, we decompose total inefficiency into its idiosyncratic and network-related components. We find that the network component reduces inefficiency by approximately \inpmod{p50EG} percentage points for the median bank, relative to its idiosyncratic component. These findings align with mechanisms such as benchmarking or information diffusion within the network. Overall, the evidence highlights that understanding and monitoring interbank network dynamics is relevant not only for assessing systemic fragility but also for evaluating the operational performance that supports broader economic functioning.
+
+The contributions of this research are threefold. First, it provides direct empirical evidence linking actual interbank networks to operational performance, bridging the gap between the banking literature and the limited empirical evidence on peer effects within financial institutions. In doing so, the analysis moves beyond the traditional focus on systemic risk and contagion to examine how network structures relate to banks’ cost efficiency during normal times. Second, methodologically, we extend the network-augmented stochastic frontier framework to a \textit{cost minimization} setting. While recent advances in this literature have focused on production functions \citep[e.g.,][]{hou2023}, our cost-based specification is better suited to the multi-output nature of banking and to an industry where costs, rather than output quantities, constitute the primary optimization margin. In doing so, we extend the application of network SF models to a context that more accurately reflects the technological and operational realities of financial institutions. Third, we exploit a unique regulatory dataset containing complete bilateral exposures across the Chilean interbank market. This enables us to map the actual network of lending relationships, distinguishing our approach from empirical works that rely on proxies such as geographic distance or correlational measures based on forecast error variance decompositions from Vector Autoregressive (VAR) models. This level of granularity overcomes common data limitations in the banking network literature and provides a more accurate foundation for identifying how interbank structures relate not only to systemic risk but also to fundamental aspects of operational efficiency.
+
+The remainder of this section reviews the related literature. The rest of the paper is organized as follows: Section \ref{sec3:model} presents our proposed econometric framework, detailing the shift from the standard production frontier model with geographical interdependence to a cost minimization specification that accounts for network structures. Section \ref{sec4:data} describes the unique administrative dataset and the construction of the variables, paying particular attention to the formulation of the adjacency matrix. Section \ref{sec5:results} reports the empirical findings, including the parameter estimates and a decomposition analysis that isolates the network contribution to efficiency. Section \ref{sec6:conc} discusses the broader implications of these results and concludes.
+
+%Section \ref{sec2:lit} reviews the relevant literature. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initial Version (erased):
+%The network of relationships linking financial institutions, particularly evident in interbank lending markets, forms a critical infrastructure in modern economies \citep{AllenGale2000, Freixas2000}. These interactions facilitate the efficient allocation of financial resources, effective management of li\-qui\-dity fluctuations, and risk diversification across participating institutions. While essential for smooth functioning, this inherent interconnectedness is most widely studied for its potential role in propagating shocks and generating systemic risk, a focus greatly intensified by events such as the 2007–2009 global financial crisis \citep{ jackson2021, GlassermanYoung2016, acemoglu2015}. Consequently, much of the academic and policy attention concerning financial networks centers on stability and contagion.
+%However, the influence of these networks likely extends beyond crisis dynamics to shape bank behavior and operational performance during periods of relative calm. While the literature on financial risk and contagion through networks is vast, considerably less empirical attention has been paid to how interconnectedness affects other key outcomes, such as bank efficiency and productivity. Several channels suggest such links are plausible. Network ties might facilitate coordinated behaviors, such as herding or peer effects, potentially leading banks to reduce information costs by mimicking others. Banks could also learn from the operational successes or failures of their direct connections, leading to performance benchmarking (positive or negative) that impacts efficiency. Furthermore, the network structure could influence market power, the speed of information diffusion, or the pace of technological adoption, thereby affecting overall industry performance. Exploring these dimensions is important for a better understanding of the persistent role interconnectedness play in the banking sector.
+%Despite plausible theoretical foundations, empirical evidence quantifying the impact of interbank relationships on banking industry performance remains scarce. Methodological and practical challenges contribute to this gap. Detailed data tracing specific transactions and linkages between individual financial institutions, crucially linked to their balance sheets, are often confidential and inaccessible. This forces researchers to rely on aggregated data, simulations, or network proxies (like geographical distance) that may not capture the true underlying structure of financial interdependence. Moreover, adequately modeling performance metrics like efficiency while simultaneously accounting for complex network structures requires novel econometric tools that are still work in progress.
+%This paper aims to bridge this empirical gap by directly investigating the relationship between interconnectedness and bank performance, leveraging unique administrative data from the Chilean financial system. Specifically, we ask: How does interconnectedness among banks, as defined by interbank lending network structures, influence their operational cost efficiency?
+%To investigate this question, we employ a novel empirical strategy combining unique administrative data with recent advances in the econometric modeling of efficiency analysis. Our data is directly facilitated by the Chilean regulatory authority of the financial market (the \emph{Comisi\'{o}n para el Mercado Financiero} - CMF) and is based on detailed daily transaction records from the interbank lending market (Form C-18, according to local accounting codes) linked to comprehensive monthly bank balance sheet information (Form MB-2) for virtually all banks operating in Chile during 2008–2020 (\textbf{NOTE: This version of the paper is based on a sub-sample 2016-2017 and extending to the full sample is still ongoing work}). This rich data allows us to construct time-varying network adjacency matrices based on actual lending relationships, overcoming significant data limitations encountered in previous literature.%%
+%Methodologically, we employ a two-step Generalized Method of Moments (GMM) estimation approach, inspired by recent advances in stochastic frontier analysis (SFA) models incorporating spatial dependencies \citep[e.g.,][]{hou2023, chanci2024}. While previous empirical studies often approximate interconnectedness using geographical distance, we utilize actual lending transactions. This approach provides a more precise measure of interbank relationships, particularly in the specific banking context of our study. Our strategy thus enables the estimation of bank-level cost efficiency using a flexible translog specification, explicitly accounting for interbank network structures and controlling for unobserved heterogeneity. Additionally, this method avoids the computational complexities associated with traditional Maximum Likelihood estimation, particularly when dealing with time-varying network effects in SFA frameworks.
+%Our empirical analysis suggests that the overall Chilean banking system exhibits relatively high levels of cost efficiency during the studied period. Crucially, we find that interconnectedness is a statistically significant factor influencing these efficiency levels. Preliminary results yield an average network dependence parameter estimate ($\hat{\rho}$) of approximately \inpmod{rho_round} within the cost inefficiency model. This negative estimate indicates that, on average, network connections in the Chilean interbank market are associated with lower inefficiency (enhanced cost efficiency). Further decomposing total inefficiency, to assess the relative importance of this network effect, we find that it accounts for a reduction of approximately \inpmod{p50EG} percentage points in cost inefficiency for the median bank-period observation, relative to the bank's idiosyncratic inefficiency. These findings align with potential mechanisms involving competitive pressures or benchmarking opportunities within the network. These results also highlight that fostering a well-functioning, efficient banking system through understanding network dynamics is not merely a secondary policy objective but a key component supporting overall economic performance and stability.%%
+%This study contributes to the literature in several respects. Firstly, it provides direct empirical evidence linking actual interbank networks to operational performance, expanding the discussion beyond traditional systemic risk and contagion analyses. Methodologically, it exemplifies the application of advanced SF techniques incorporating network dependencies utilizing granular administrative data. From a policy perspective, our results emphasize the importance of monitoring banking network structures not only for their implications regarding financial stability and shock propagation but also for their tangible influence on the fundamental cost efficiency and operational health of the banking sector. Thus, fostering a well-functioning, efficient banking system is critical for overall economic performance, and understanding the role network dynamics play in achieving this efficiency merits ongoing attention from researchers and policymakers alike.
+%The remainder of this paper is organized as follows: Section \ref{sec2:lit} reviews the relevant literature. Section \ref{sec3:model} details the econometric methodology. Section \ref{sec4:data} describes the data and variable construction. Section \ref{sec5:results} presents the empirical results, including the efficiency estimates and decomposition analysis. Section \ref{sec6:conc} discusses the findings and concludes with policy implications.
+
+%\newpage
+%\section{Related Literature}\label{sec2:lit}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{Related literature} 
+Our paper relates to and contributes to several distinct strands of literature. First, we contribute to the extensive body of work examining financial interconnectedness. Foundational theoretical contributions, such as \citet{AllenGale2000} and \citet{Freixas2000}, established that while interbank linkages provide essential insurance against idiosyncratic liquidity shocks, they simultaneously create channels for contagion that can destabilize the system. This literature, heavily influenced by the 2007–2009 global financial crisis, has largely focused on the structural fragility of networks and their role in propagating systemic risk \citep{jackson2021, GlassermanYoung2016}. A central theme in this strand of research is the inherent trade-off between risk-sharing and contagion, often described as the ``robust-yet-fragile'' property of financial networks. For instance, \citet{acemoglu2015} and \citet{elliott2014} formally show that while denser connectivity facilitates diversification and absorption of small shocks, it also serves as a mechanism for cascading failures when shocks exceed a certain magnitude. Similarly, \citet{gai2010} highlight how greater connectivity can increase the probability of systemic collapse during stress events. While we build on the premise that network structure fundamentally alters bank outcomes, our study diverges from this stability-centric focus. Instead of examining how networks amplify extreme tail events (crises), we empirically explore how these structures influence a critical but less-studied economic outcome: banking operational performance and cost efficiency during periods of relative stability.
+
+Second, our work contributes to the literature on peer effects and social learning in finance. Drawing on the identification framework of \citet{manski1993}, this strand of research posits that economic agents, including banks, imitate peers to economize on information acquisition costs or to leverage perceived superior expertise. The theoretical foundations of such behavior are well-established: \citet{scharfstein1990} and \citet{bikhchandani1998} describe how reputational concerns and informational cascades can lead rational agents to ignore private signals in favor of the aggregate consensus \citep[see also][]{banerjee1992}. Empirically, evidence of such dynamics in the banking sector is growing but limited. Notable exceptions include \citet{gupta2019}, who identifies spillover effects in foreclosure decisions using quasi-random variation in bankruptcy courts, and \citet{margaretic2021banks}, who document peer effects in the Chilean interbank market, showing that banks mimic their peers' decisions to cut credit lines to stressed institutions.
+
+We extend this literature by shifting the focus from behavioral contagion to operational performance. While studies like \citet{margaretic2021banks} primarily analyze how peer interactions drive lending decisions or risk avoidance, our research examines how these interconnections shape a fundamental economic outcome: cost efficiency. We depart from standard approaches by integrating interconnectedness directly into a stochastic frontier econometric model. This allows us to move beyond detecting the presence of herding to quantifying the economic magnitude of network spillovers on banking productivity.
+
+Third, our research contributes to the literature linking network structures to banking performance \citep[e.g.,][]{silva2018,silva2016,elliott2014}. This literature suggests several channels through which interconnectedness can enhance operational efficiency, including improved liquidity management, specialization, and the accelerated diffusion of information or technology. However, empirical evidence quantifying these effects remains limited. A notable exception is \citet{silva2016}, who examine the Brazilian interbank market to understand how network topology, specifically core-periphery structures, affects bank performance. Their approach is two-step: they first estimate efficiency scores using stochastic frontier analysis and subsequently regress these scores on network metrics. They find that a bank's position in the core is positively associated with cost efficiency but negatively associated with risk-taking efficiency. Our study fundamentally departs from this approach by moving beyond topological statistics. Rather than using aggregated measures (such as centrality) as explanatory variables for pre-estimated efficiency, we incorporate network dependencies directly into the error structure of the stochastic cost frontier via the full adjacency matrix. This allows us to model a direct transmission mechanism: how a bank’s operational inefficiency is contemporaneously influenced by the inefficiency of its actual counterparties. By treating the network as a channel for endogenous spillovers rather than just a set of structural characteristics, we offer a more granular and structurally grounded assessment of how interbank relationships shape performance.
+
+Fourth, we contribute to the debate on network measurement by distinguishing between `physical' and `statistical' interconnectedness. As noted by \citet{brunetti2019} and \citet{das2022}, data confidentiality has often forced researchers to rely on proxies to infer network structures. These include geographical distance, common asset holdings, or volatility spillovers derived from Vector Autoregressions (VAR) \citep[see, e.g.,][]{diebold2023}. While these measures capture market sentiment and information transmission, they can diverge significantly from the actual set of bilateral obligations. By exploiting detailed administrative records of interbank loans, we map the `physical' network of direct financial exposures. This granularity provides a precise identification of the direction and intensity of peer pressure, avoiding the potential measurement errors inherent in market-based approximations.
+
+Finally, we offer a distinct contribution to the econometric literature on efficiency measurement. While the Stochastic Frontier Analysis (SFA) framework remains the standard for benchmarking due to its flexibility \citep[e.g.,][]{kumbhakar2015}, we innovatively extend recent advancements in network-augmented SFA \citep{hou2023, kutlu2020spatial, glass2016, tran2023}. Specifically, we adapt the two-step GMM estimation strategy proposed by \citet{hou2023}, originally applied to production functions, to a stochastic cost frontier with fixed effects. This shift is methodologically critical: unlike single-output production models, our cost-based specification is tailored to the multi-output nature of banking, where cost minimization constitutes the primary optimization margin. Furthermore, we replace the standard use of geographic spatial weights with an adjacency matrix derived from actual financial transactions. This dual refinement, shifting from production to cost minimization and from geographic proxies to `physical' network measures, provides a more accurate and structurally grounded framework for identifying network dependencies in banking efficiency.
+
+
+%Lastly, the Chilean banking sector offers a particularly suitable context for this study. Although prior empirical analyses of Chilean banking have primarily focused on financial stability and banking crises (e.g., Loyola and Portilla, 2011; Cobas et al., 2021), few studies explicitly address banking efficiency and performance, especially in relation to interbank network structures. The present research contributes substantially to the local literature by providing updated, detailed analyses of efficiency outcomes within a modern interbank network context, informed by recent regulatory changes and significant economic events, including Basel III implementation and economic disruptions such as the global financial crisis and COVID-19 pandemic (Research Proposal Fondecyt, 2025).
+
+%This study also contributes to the understanding of the Chilean banking sector. While several studies have examined banking performance in Chile \citep[e.g.,][]{Budnevich2001,LoyolaPortilla2011,Cobas2021}, many of these analyses utilize older data or do not incorporate recent advancements in efficiency modeling, particularly those accounting for network interconnectedness. By applying a state-of-the-art econometric approach to recent, granular data, our paper provides updated insights into the operational efficiency of Chilean banks and, more broadly, offers evidence from an important emerging market on the interplay between financial networks and bank performance. This contributes to a more nuanced understanding of banking dynamics in developing countries, where interbank markets can play a particularly crucial role in liquidity and funding.
+
+%\newpage
+$$\,$$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Empirical Strategy}\label{sec3:model}
+
+We estimate a standard stochastic cost frontier, a widely used framework in banking applications \citep[e.g.,][]{mamonov2024,hughes2019scale,tabak2012,kumbhakar2000}, and extend the inefficiency term to incorporate network dependence. The cost specification conditions on a conventional set of shifters—outputs, input prices, and quasi-fixed inputs—and includes time-fixed effects. To capture peer interactions, our extension follows the methodology of \citet{hou2023}, modeling a bank's inefficiency as a function of a weighted average of its peers' inefficiencies. The model is estimated using a two-step GMM procedure that identifies the network parameter from the augmented variance–covariance structure. The weights for this interaction are constructed from detailed administrative records on interbank exposures. This setup allows us to explore specifications using both persistent and dynamic network structures, with alternative normalization schemes. This section first presents the econometric model and then details the estimation strategy.
+
+\subsection{Econometric Specification}
+
+\paragraph{The cost function} 
+We begin by defining the translog stochastic cost frontier model, drawing on the extensive literature on bank efficiency analysis. In this framework, cost efficiency reflects a bank's ability to minimize costs conditional on its output volume ($\bm{y}$), input prices ($\bm{p}$), and a set of quasi-fixed inputs ($\bm{z}$). We specify the translog (TL) stochastic cost function for bank $i=1,\dots,N$ in time period $t=1,\dots,T$ as follows:
+
+\begin{equation}
+    \ln{\mathrm{Cost}}_{it} = \alpha_t + TL(\bm{y}_{it}, \bm{p}_{it}, r_{it}, \bm{z}_{it}; \bm{\beta} ) + \varepsilon_{it}, \label{eq:model_part1}
+\end{equation}
+
+where $\mathrm{Cost}_{it}$ denotes the variable cost of bank $i$; $\alpha_t$ is a time-fixed effect capturing macroeconomic shocks and common shifts in the cost frontier; and $TL(\cdot)$ represents the translog functional form. The vector $\bm{y}$ contains outputs (e.g., income-generating activities like loans or investments), while $\bm{p}$ denotes the vector of input prices. The vector $\bm{z}$ represents quasi-fixed inputs, specifically equity capital. Given its limited variation over time in our sample, equity effectively functions as a proxy for bank-specific fixed effects, thus mitigating unobserved heterogeneity across banks that might otherwise confound the efficiency estimates. Finally, $\bm{\beta}$ represents the vector of technology parameters to be estimated. To ensure linear homogeneity in input prices, both the dependent variable ($\mathrm{Cost}_{it}$) and the input prices ($\bm{p}_{it}$) are normalized by the price of one input ($p_{1it}$).
+
+The stochastic frontier specification in equation \eqref{eq:model_part1} follows \cite{mamonov2024} and incorporates the concept of risk-adjusted bank efficiency, building on the framework established by \cite{hughes1996}. While including a risk measure ($r_{it}$) is standard in the banking literature, it holds particular importance in our setting. Since our measure of interconnectedness is derived from interbank debt exposures, explicitly accounting for risk is crucial to mitigate potential sorting concerns. Specifically, if banks with higher risk appetites systematically rely more on interbank borrowing, failing to control for this dimension could confound the estimated relationship between network structure and cost inefficiency.
+
+\paragraph{Interconnectedness and efficiency} 
+Following the standard stochastic frontier literature, the error term $\varepsilon_{it}$ in equation \eqref{eq:model_part1} is decomposed into a symmetric noise term $\nu_{it}$ and a non-negative inefficiency term $u_{it}$ \citep{kumbhakar2000,kumbhakar2015}. We extend this framework by explicitly modeling network dependence among banks. Specifically, adopting the approach of \citet{hou2023}, we specify the vector of composite errors $\bm{\varepsilon}_{t} = (\varepsilon_{1t}, \dots, \varepsilon_{Nt})'$ as a function of the performance of connected peers, governed by an $N \times N$ adjacency matrix $W_t$. The structural equation is defined as follows:
+
+\begin{equation}
+\begin{aligned}
+    \bm{\varepsilon}_{t} &= \rho W_t \bm{\varepsilon}_{t} + \dot{\bm{\varepsilon}}_{t}, \\
+    \dot{\varepsilon}_{it} &= \dot{\nu}_{it} + \dot{u}_{it},
+\end{aligned} \label{eq:model_part2}
+\end{equation}
+
+where $\rho$ is the network dependence parameter to be estimated. The term $W_t \bm{\varepsilon}_{t}$, often expressed component-wise as $\sum_j w_{ijt} \varepsilon_{jt}$ and defined as the endogenous network lag, represents a weighted combination of the composite errors of other banks to which bank $i$ is financially connected. The element $w_{ijt}$ denotes the predetermined weight assigned to the influence of bank $j$ on bank $i$ at time $t$. This general specification accommodates potentially evolving network structures, with the standard normalization that $w_{iit} = 0$.
+
+A key distinction between our specification and that of \citet{hou2023} lies in the construction of the adjacency matrix. While \citeauthor{hou2023} assume $W$ to be constant—standard practice in spatial econometrics where intensity is often based on geographic proximity \citep{Elhorst2014,lesage2009,pace1997}—we leverage detailed administrative data on interbank loan transactions to construct matrices that may vary over time (with the time-invariant matrix being a special case). This dynamic specification represents a significant advance over studies constrained to static interactions \citep[see, e.g.,][]{margaretic2021banks}. By allowing the network structure to evolve monthly, we capture the changing nature of interbank connections, yielding a more realistic depiction of network effects and potentially enhancing the model's identification. We reserve the detailed discussion of the matrix construction for the Data section; for the current econometric exposition, we rely on the general notation $W_t$ and treat it as a predetermined matrix.
+
+Finally, consistent with the standard stochastic frontier literature \citep{kumbhakar2000,kumbhakar2015}, we assume that the underlying error components are independently distributed. Specifically, the idiosyncratic noise follows a normal distribution, $\dot{\nu}_{it}\sim \mathcal{N}(0,\sigma^2_{\dot{\nu}})$, while the pre-network inefficiency term follows a half-normal distribution, $\dot{u}_{it}\sim \mathcal{N}^+(0,\sigma^2_{\dot{u}})$. Furthermore, following \citet{mamonov2024}, we allow for exogenous determinants of inefficiency, such as ownership structure or other bank characteristics. Given that our estimation strategy relies on the variance–covariance structure as in \citet{hou2023}, we incorporate these determinants by parameterizing the variance of the inefficiency distribution. Thus, we specify $\dot{u}_{it}\sim \mathcal{N}^+\big(0,\sigma^2_{\dot{u}}(\bm{d}_{it};\bm{\delta})\big)$, where the variance function is defined as $\sigma_{\dot{u}}(\bm{d}_{it};\bm{\delta})=\exp(\delta_0+\bm{\delta}'\bm{d}_{it})$, with $\bm{d}_{it}$ representing the vector of determinants and $\bm{\delta}$ the associated parameter vector \citep[see section 3.3 in][]{hou2023}.
+
+Overall, this enriched specification—combining a translog cost frontier with risk controls, time-fixed effects, and parameterized inefficiency variance—is explicitly designed to isolate the network effect, thereby strengthening the identification and estimation of our primary parameter of interest, $\rho$.
+
+
+
+%%% ACA VOY ...
+
+%%%%%%%%%%%%
+\subsection{Estimation strategy}
+
+Given that a model can be consistently estimated when it is identified, we proceed directly to estimation, rather than addressing identification and consistency issues individually. In particular, for the estimation we follow \cite{hou2023} and \cite{chanci2024} and employ a two-step Generalized Method of Moments (GMM) estimation technique for stochastic frontier models involving interactions across units. This GMM framework presents notable advantages over Maximum Likelihood (ML) estimation in this context. Firstly, unlike the Maximum Like ML method, this approach avoids making full distributional assumptions. Secondly, it circumvents significant numerical optimization complexities associated with ML, such as the requirement for high-dimensional numerical integration within the log-likelihood function or the computational burden arising from a time-variant spatial weighting matrix.\footnote{If $W_t$ enters the likelihood function via the error structure (e.g., through terms involving $(I-\rho W_t)^{-1}$ that must be computed for each time period $t$), it substantially complicates the ML optimization compared to the moment-based GMM approach used here.}
+
+The two-step approach we implement can be summarized as follows: First, we leverage the panel data structure to transform the model and employ a cross-sectional demeaning (or `between') estimator, thereby avoiding strong initial distributional assumptions. Second, we compute pseudo-residuals from the first-stage estimation. These pseudo-residuals are then used to recover estimates of (in)efficiency, incorporating the adjacency matrix. This step is conducted using GMM, where the moment conditions are based on distributional assumptions for the noise and inefficiency terms. In what follows, we discuss these steps in detail.
+
+%%% First-stage
+\subsubsection{First step - Transformation} 
+The model in Equation \eqref{eq:model_part1} does not satisfy the standard assumption of classical regression models that the expected value of the error term is zero. Specifically, when $u_{it}$ follows the structure defined in Equation \eqref{eq:model_part2}, the composite error $\varepsilon_{it} = \nu_{it} + u_{it}$ has a non-zero expectation: $\mathbb{E}[\varepsilon_{it}] = \mathbb{E}[\nu_{it} + u_{it}] = \mathbb{E}[u_{it}]$, which represents the mean inefficiency level.
+
+Nonetheless, although the error mean is non-zero, it is possible to rewrite the model by absorbing this term into a time-specific intercept. The model from Equation \eqref{eq:model_part1} then becomes:
+\begin{align}
+\ln{\mathrm{Cost}}_{it} &= \alpha_{t}^* + TL(\bm{y}_{it}, \bm{p}_{it}, \bm{z}_{it}; \bm{\beta}^*) + \varepsilon^*_{it}, \label{eq:model_step1}
+\end{align}
+
+%\Ed{Professor: The “spatial” component, as you call it, was described in equation (2). Nonetheless, I will revisit this section to ensure the description is clearer and the narrative flows more smoothly, in line with Hou et al.}
+
+where the parameter vector $\bm{\beta}^*$ now excludes the original intercept $\beta_0$; the new time-specific intercept is $\alpha_{t}^* = \beta_0 + \alpha_t + \mathbb{E}[u_{it}]$; and the transformed error term is $\varepsilon^*_{it} = \nu_{it} + u_{it} - \mathbb{E}[u_{it}]$. Therefore, by construction, $\mathbb{E}[\varepsilon_{it}^*]=0$, and the resulting model belongs to the family of panel data models (i.e., a panel cost function featuring time-specific effects, where time-invariant individual heterogeneity is primarily accounted for by including quasi-fixed inputs, rather than via separate individual-specific intercepts).
+
+Considering that the fixed effects are nuisance parameters in our case, and given that the time dimension, $T$, in our dataset is large, we rely on a within-time transformation rather than using time dummy variables for the time fixed effects. Hence, we first employ a transformation approach to eliminate the time effects in equation \eqref{eq:model_step1}. Let $Q=(I_N-(1/N)\iota_N\iota_N')$ be the $N\times N$ matrix used to compute the demeaned variables in the within-time transformation, as established in the panel data literature \citep[e.g.,][]{baltagi2021}, where $\iota_N$ is an $N\times1$ vector of ones. In this way, one can remove the time effects $\alpha_t^*$ using $Q$. Specifically, let us denote a vector variable with a tilde as the result of pre-multiplying the vector by $Q$. For instance, $\bm{\widetilde{z}}_t$ is an $N\times1$ vector, resulting from $Q\bm{z}_t$, where $\bm{z}_t=(z_{1t},...,z_{Nt})'$.\footnote{This is also equivalent to $\widetilde{z}_{it}=(z_{it}-z_{\cdot t})$, where $z_{\cdot t}=N^{-1}\sum_i z_{it}$ .} Applying this transformation to Equation \eqref{eq:model_step1} eliminates the time-specific effect $\alpha_t^*$. Thus, since the translog function $TL(\cdot)$ is linear in the parameters $\bm{\beta}^*$, and the $Q$ transformation is a linear operator, the resulting model remains linear in $\bm{\beta}^*$:
+\begin{equation} \label{eq:model_step1_transformed}
+\widetilde{\ln{\mathrm{Cost}}}_{t} = \sum_{k} \beta_k^* \widetilde{X}_{kt} + \widetilde{\varepsilon}^*_{t}
+\end{equation}
+
+where the regressors $\widetilde{X}_{kt}$ are the transformed versions ($Q X_{kt}$) of each vector $X_{kt}$ representing a term required by the translog specification (e.g., vectors of element-wise logs like $\ln y_{it}$, squares like $(\ln y_{it})^2$, or cross-products like $\ln y_{it} \ln p_{it}$), constructed from the original data vectors $(\bm{y}_{t}, \bm{p}_{t}, \bm{z}_{t})$. As the transformed error $\widetilde{\varepsilon}^*_{t} = Q \varepsilon^*_{t}$ retains the zero-mean property (since $\mathbb{E}[\varepsilon^*_{t}]=\bm{0}$), Equation \eqref{eq:model_step1_transformed} satisfies the requirements for consistent estimation of $\bm{\beta}^*$ via Ordinary Least Squares (OLS). Therefore, applying OLS yields the first-stage estimates $\hat{\bm{\beta}}^*$ of $\bm{\beta}^*$ without using distributional assumptions on $\nu_{it}$ and $u_{it}$, avoiding computational challenges associated with the ML method.
+
+
+%%% Second-stage
+\subsubsection{Second step: GMM estimation } 
+The second stage of our estimation procedure utilizes the parameter estimates $\bm{\hat{\beta}}^*$ obtained from the first step. Recalling Equation \eqref{eq:model_part1}:
+$$
+\ln{\mathrm{Cost}}_{it} - TL(\bm{y}_{it}, \bm{p}_{it}, \bm{z}_{it}; \bm{\beta}^*) = \beta_0 + \alpha_t + \nu_{it} + u_{it}
+$$
+
+We construct the pseudo-residuals, denoted by $e_{it}$, using the first-step estimates $\bm{\hat{\beta}}^*$:
+\begin{equation} \label{eq:pseudo_residual_def}
+e_{it} = \ln{\mathrm{Cost}}_{it} - TL(\bm{y}_{it}, \bm{p}_{it}, \bm{z}_{it}; \bm{\hat{\beta}}^*)
+\end{equation}
+
+These pseudo-residuals approximate the composite error term plus the intercept and time effects, $e_{it} \approx \beta_0 + \alpha_t + \nu_{it} + u_{it}$. As established earlier, we can decompose the right-side of this expression into a time-specific mean component $\alpha_t^* = (\beta_0 + \alpha_t + \mathbb{E}[u_{it}])$ and a zero-mean error component $\varepsilon_{it}^* = (\nu_{it} + u_{it} - \mathbb{E}[u_{it}])$. Thus, $e_{it} \approx \alpha_t^* + \varepsilon_{it}^*$. Since by construction $\mathbb{E}[\varepsilon_{it}^*]=0$, the time-specific mean component $\alpha_t^*$ can be consistently estimated by the cross-sectional average of the pseudo-residuals for each period $t$.
+
+These pseudo-residuals approximate the composite error term plus the intercept and time effects, $e_{it} \approx \beta_0 + \alpha_t + \nu_{it} + u_{it}$. As established earlier, we can decompose the right-side of this expression into a time-specific mean component $\alpha_t^* = (\beta_0 + \alpha_t + \mathbb{E}[u_{it}])$ and a zero-mean error component $\varepsilon_{it}^* = (\nu_{it} + u_{it} - \mathbb{E}[u_{it}])$. Thus, $e_{it} \approx \alpha_t^* + \varepsilon_{it}^*$. Since by construction $\mathbb{E}[\varepsilon_{it}^*]=0$, the time-specific mean component $\alpha_t^*$ can be consistently estimated by the cross-sectional average of the pseudo-residuals for each period $t$: $\hat{\alpha}_t^* = N^{-1}\sum_i{e_{it}}$. In what follows, we use this estimate $\hat{\alpha}_t^*$ to obtain residuals suitable for estimating the (in)efficiency structure. In particular, we define the adjusted residuals $\bar{e}_{it}$ by removing this estimated time-specific mean: $\bar{e}_{it} = e_{it} - \hat{\alpha}_t^*$. Thus, substituting the approximations yields the central equation for the second stage:
+\begin{align}
+\bar{e}_{it} &= \nu_{it} + u_{it} - \mathbb{E}[u_{it}] 
+\label{eq:model_step2} 
+\end{align}
+
+Equation \eqref{eq:model_step2} represents a Stochastic Frontier (SF) model structure based on these adjusted residuals $\bar{e}_{it}$. Here, $\nu_{it}$ is the two-sided random noise and $(u_{it} - \mathbb{E}[u_{it}])$ is the (mean-shifted) one-sided inefficiency term. Therefore, the second-stage GMM procedure can use distributional assumptions on the underlying components $\nu_{it}$ and $u_{it}$ (particularly their network-independent counterparts $\dot{\nu}_{it}, \dot{u}_{it}$) to formulate moment conditions for estimating the spatial parameter $\rho$, the variance parameters $\sigma^2_{\dot{\nu}}$ and $\sigma^2_{\dot{u}}$, and the mean inefficiency $\mathbb{E}[u_{it}]$. 
+
+As mentioned, given that our model specification in Equation \eqref{eq:model_part2} incorporates dependency in banking performance via the time-variant weights matrix $W_t$, the ML estimation for the becomes complex. Thus, we closely follow the estimation approach proposed by \cite{hou2023} (henceforth, HZK). They propose GMM estimation for a semiparametric stochastic frontier model incorporating spatial dependence. Although their model features functional coefficients while our specification uses constant parameters (including fixed effects), the dependence structure applied to the second-stage error components is analogous, allowing the adaptation of their GMM procedure.
+
+In short, the GMM estimation identifies the structurally dependence parameter $\rho$ and the variance parameters ($\sigma^2_{\dot{\nu}}, \sigma^2_{\dot{u}}$) associated with the underlying structurally independent noise ($\dot{\nu}_{it}$) and inefficiency ($\dot{u}_{it}$) components. This relies on exploiting moment conditions derived from the distributional assumptions on $\dot{\nu}_{it}$ and $\dot{u}_{it}$. In particular, let $S(\rho,W_t)=(I_N - \rho W_t)^{-1}$. Thus, under the assumption that $\dot{u}_{it}$ has a half-normal distribution independent of $\dot{\nu}_{it}$, the second-moment condition based on the variance-covariance structure of $\bm{\varepsilon}_t = \bm{\nu}_t+\bm{u}_t = (I_N - \rho W_t)^{-1}(\dot{\bm{\nu}}_t + \dot{\bm{u}}_t)=S(\rho,W_t)(\dot{\bm{\nu}}_t + \dot{\bm{u}}_t)$ is:
+\begin{align}
+\mathbb{V}(\bm{\varepsilon}_t) &= \mathbb{V}(S(\rho,W_t)(\dot{\bm{\nu}}_t + \dot{\bm{u}}_t)) = \left[\sigma^2_{\dot{\nu}} + \left(1-\frac{2}{\pi}\right)\sigma^2_{\dot{u}}\right] S(\rho,W_t) (S(\rho,W_t))^\top
+\label{eq:var-cov}
+\end{align}
+
+%\Ed{Professor: Regarding your comment on the structure of $W_t$, my idea is to define it based on the relative importance of each bank’s interbank transactions with other banks, rather than on geographical distance as in Hou et al. Otherwise, the theoretical expression for the variance–covariance matrix in equation (7) remains the same as in Hou et al.}
+
+The sample counterpart for the $N \times N$ theoretical variance-covariance matrix $\mathbb{V}(\bm{\varepsilon}_t)$ is constructed for each time period $t$ using the adjusted residuals $\bar{\bm{e}}_t = (\bar{e}_{1t}, \dots, \bar{e}_{Nt})^\top$ from Equation \eqref{eq:model_step2}. Thus, as $\mathbb{E}[\bar{e}_{it}] = 0$, the time-specific sample variance-covariance matrix is calculated as $\hat{V}_t = \bar{\bm{e}}_{t} \bar{\bm{e}}_{t}^\top$. According to HZK, leveraging the principle of minimum distance estimation, the unknown parameter vector $\bm{\theta} = (\rho, \sigma^2_{\dot{\nu}}, \sigma^2_{\dot{u}})$ can be estimated by minimizing the distance between these sample covariance matrices $\hat{V}_t$ and their theoretical counterparts $\mathbb{V}(\bm{\varepsilon}_t; \bm{\theta})$ over time. Specifically, the parameters are chosen to minimize the GMM objective function:
+\begin{align}
+\min_{\bm{\theta}} Q(\bm{\theta}) = \min_{\bm{\theta}} \sum_{t=1}^T \left\Vert \hat{V}_t - \mathbb{V}(\bm{\varepsilon}_t; \bm{\theta}) \right\Vert^2_F
+\label{eq:obj_fn}
+\end{align}
+
+where $\left\Vert\cdot\right\Vert_F$ denotes the Frobenius norm, and $\mathbb{V}(\bm{\varepsilon}_t; \bm{\theta})$ is the theoretical variance-covariance matrix defined in Equation \eqref{eq:var-cov}.
+
+Furthermore, considering that practical optimization of $Q(\bm{\theta})$ may encounter challenges such as multiple local minima or irregular objective function surfaces, we adopt a improved deviation from HZK regarding the numerical computation of $\bm{\theta}$. Specifically, we enhance numerical stability and efficiency by noting that the estimation must respect the constraint $|\rho|<1$, associated with the invertibility of the $S(\rho, W_t)$ term. We thus implement a grid search strategy, widely used in the spatial econometrics literature \citep[see, e.g.,][]{Elhorst2014,Elhorst2010,pace1997}. This involves a grid search over the permissible range $\rho \in (-1, 1)$. For each candidate value $\rho_j$ from the grid, the GMM objective function $Q(\rho_j, \sigma^2_{\dot{\nu}}, \sigma^2_{\dot{u}})$ is minimized with respect to $\sigma^2_{\dot{\nu}}$ and $\sigma^2_{\dot{u}}$ to obtain conditional estimates $\hat{\sigma}^2_{\dot{\nu}}(\rho_j)$ and $\hat{\sigma}^2_{\dot{u}}(\rho_j)$. The optimal estimate $\hat{\rho}$ is then selected as the value $\rho_j$ that yields the minimum value of the GMM objective function in Equation \eqref{eq:obj_fn} across all tested grid points, along with its corresponding conditional estimates $\hat{\sigma}^2_{\dot{\nu}}(\hat{\rho})$ and $\hat{\sigma}^2_{\dot{u}}(\hat{\rho})$.\footnote{To efficiently locate the minimum, we first employ a coarser grid for $\rho$ (e.g., using 0.1 increments) to find an initial optimum, followed by a finer grid search (e.g., using 0.001 increments) in the neighborhood of that initial value. This vectorized grid search approach, potentially combined with parallel computing techniques, speeds up the estimation within the GMM framework.}
+
+%%
+ \subsubsection{Post-Estimation Calculations}\label{sec3:model-post}
+Once the GMM estimation yields consistent estimates of the parameters $\hat{\rho}$, $\hat{\sigma}^2_{\dot{\nu}}$, and $\hat{\sigma}^2_{\dot{u}}$, further quantities of interest can be derived.
+
+First, we estimate the mean inefficiency component $\mathbb{E}[u_{it}]$. This calculation utilizes the estimate $\hat{\sigma}^2_{\dot{u}}$ and the distributional assumption made for the underlying network-independent inefficiency component $\dot{u}_{it}$. Given that $\dot{u}_{it}$ follows a half-normal distribution (implying $\mathbb{E}[\dot{\bm{u}}_t] = \sqrt{2/\pi} \hat{\sigma}_{\dot{u}} \iota_N$), the estimate incorporating the network multiplier is given by $\hat{\mathbb{E}}[u_{it}]$:
+$$
+\hat{\mathbb{E}}[u_{it}] = \tau_i \mathbb{E}[\bm{u}_t] \Big|_{ \left(\rho=\hat{\rho}\,,\, \sigma_{\dot{u}}= \hat{\sigma}_{\dot{u}}\right)} = \sqrt{\frac{2}{\pi}} \hat{\sigma}_{\dot{u}} \tau_i S(\hat{\rho},W_t)\iota_N
+$$
+where $\iota_N$ is an $N\times1$ vector of ones, and $\tau_i$ is a $1\times N$ row vector selecting the $i$-th element. Since in our application the weights matrix $W_t$ is row-normalized for each $t$, the mean (in)efficiency is a constant term.
+
+Second, we recover estimates of the combined constant and time fixed effects, which will be later used in the computation of the standard errors. Recalling the estimated time-specific component $\hat{\alpha}_t^* = \bar{e}_t$, which consistently estimates $\alpha_t^* = \beta_0 + \alpha_t + \mu$, one can compute: $(\widehat{\beta_0 + \alpha_t}) = \hat{\alpha}_t^* - \hat{\mathbb{E}}[u_{it}]$.\footnote{Separating the overall constant $\beta_0$ from the individual time effects $\alpha_t$ would require an additional normalization constraint (e.g., $\sum_t \alpha_t = 0$), which is not pursued here.}
+
+Third, following HZK's adaptation of \cite{jondrow1982} (JLMS), we predict the bank-specific inefficiency component. This term is defined by the conditional expectation of the underlying network-independent $\dot{u}_{it}$ given the underlying network-independent composite error $\dot{\varepsilon}_{it}$:
+\begin{align}\label{eq:u_conditional_exp}
+\dot{\mu}_{it}=\mathbb{E}[\dot{u}_{it}|\dot{\varepsilon}_{it}] = \mu^{*}_{it} + \sigma_{*} \frac{\phi(-\mu^{*}_{it}/\sigma_{*})}{1 - \Phi(-\mu^{*}_{it}/\sigma_{*})}
+\end{align}
+
+where $\mu^{*}_{it} = \dot{\varepsilon}_{it}{\sigma}^2_{\dot{u}}/(\sigma^2_{\dot{u}}+\sigma^2_{\dot{\nu}})$ and $\sigma_{*} = \sqrt{\sigma^2_{\dot{u}}\sigma^2_{\dot{\nu}} / (\sigma^2_{\dot{u}}+\sigma^2_{\dot{\nu}})}$, using the estimated variance parameters.
+
+The unobserved $\dot{\varepsilon}_{it}$ required for Equation \eqref{eq:u_conditional_exp} is obtained via the relationship $\dot{\bm{\varepsilon}}_t = (I_N - \rho W_t) \bm{\varepsilon}_t$. Thus, we approximate the unobserved vector $\bm{\varepsilon}_t = \bm{\nu}_t + \bm{u}_t$ by combining the adjusted residuals with the estimated mean inefficiency according to Equation \eqref{eq:model_step2}, $\hat{\bm{\varepsilon}}_t \approx \bar{\bm{e}}_t + \hat{\mathbb{E}}[u_{t}]$. Subsequently, we compute the estimate $\hat{\dot{\bm{\varepsilon}}}_t$. The $i$-th element of this vector, $\hat{\dot{\varepsilon}}_{it}$, is then plugged into Equation \eqref{eq:u_conditional_exp} to obtain the conditional estimate $\hat{\dot{\mu}}_{it}=\widehat{\mathbb{E}[\dot{u}_{it}|\dot{\varepsilon}_{it}]}$. The final prediction of the actual inefficiency term is constructed from these estimates using the specific network transformation, $\text{Inefficiency}_t = \hat{\bm{\mu}}_{t} = S(\hat{\rho},W_t) * \hat{\dot{\bm{\mu}}}_{t}$, as detailed in HZK.
+
+Finally, we conduct a decomposition of (in)efficiency estimates that offers valuable insights into the relative importance of internal factors versus interconnectedness in determining observed banking performance. Specifically, considering that total bank inefficiency is related to underlying network-independent components via $S(\hat{\rho},W_t)\hat{\dot{\bm{\mu}}}_{t}$, we can decompose the estimated total cost inefficiency into effects originating from the bank's own underlying inefficiency component and effects spilling over from other banks through the network (e.g., peer effects). Let the total inefficiency for bank $i$ at time $t$ be $\sum_{j=1}^N s_{ij} \hat{\dot{\mu}}_{jt}$, where $s_{ij}$ is an element of $S(\hat{\rho},W_t)$. This sum can thus be separated into two terms as follows:
+$$\text{Total Inefficiency}_{it} \equiv s_{ii} \hat{\dot{\mu}}_{it} + \sum_{j \neq i} s_{ij} \hat{\dot{\mu}}_{jt} \equiv \text{Direct Effect}_{it} + \text{Indirect (Network) Effect}_{it} $$
+
+Thus, the Direct Effect isolates the impact of a bank's own underlying inefficiency, scaled by the feedback effect $s_{ii}$ from the diagonal of the multiplier matrix $S$. The Indirect Effect, on the other hand, captures the net influence of all other banks' underlying inefficiencies propagated through the network via the off-diagonal elements ($s_{ij}$) of $S$.
+
+%%% Bootstrap
+\subsubsection{Computation of Standard Errors via Wild Bootstrap}
+
+Given the multi-step nature of our GMM estimation procedure for the stochastic cost frontier with interconnectedness, deriving analytical standard errors is complex. Therefore, we employ a wild bootstrap approach to assess the sampling variability of the estimated parameters ($\hat{\rho}$, $\hat{\sigma}_{\dot{v}}$, and $\hat{\sigma}_{\dot{u}}$. This method is well-suited for models with complex error structures and potential heteroskedasticity, and its applicability to spatial models has been already discussed \citep[see, e.g., HZK for simulation results in a related GMM framework, and][for wild bootstrap with cross-sectional dependence]{gonccalves2020bootstrapping}.
+
+Our wild bootstrap procedure is adapted to the specific structure of our model, where the composite error $\varepsilon_{it}$ is transformed into an underlying, network-independent structural error $\dot{\varepsilon}_{it}$ via the relation $\dot{\bm{\varepsilon}}_t = (I_N - \hat{\rho}W_t)\bm{\varepsilon}_t$. The core idea is to resample these estimated network-independent residuals $\hat{\dot{\varepsilon}}_{it}$. In particular, for each bootstrap replication $b = 1, \dots, B$, the procedure is as follows:
+
+\begin{enumerate}
+    \item \textbf{Generate bootstrap multipliers:} We generate a vector of bootstrap multipliers $\bm{\xi}^{(b)}$ of dimension $NT \times 1$ (where $N$ is the number of banks in period $t$, and $NT$ is the total number of observations). These multipliers are drawn independently from the \cite{mammen1993} two-point distribution:
+    \begin{equation*}
+        \xi_{it}^{(b)} =
+        \begin{cases}
+            -(\sqrt{5}-1)/2 & \text{with probability } p = (\sqrt{5}+1)/(2\sqrt{5}) \\
+            (\sqrt{5}+1)/2 & \text{with probability } 1-p
+        \end{cases}
+    \end{equation*}
+    The estimated underlying structural residuals $\hat{\dot{\varepsilon}}_{it}$ are then perturbed to create bootstrapped structural residuals: $\dot{\varepsilon}_{it}^{(b)} = \hat{\dot{\varepsilon}}_{it} \cdot \xi_{it}^{(b)}$.
+
+    \item \textbf{Construct bootstrapped dependent variable:} Using the parameters from the initial estimation ($\widehat{\beta_0+\alpha_t}$, $\bm{\hat{\beta}}^*$, and $\hat{\rho}$), we construct the bootstrapped log-cost variable, $\ln Cost_{it}^{(b)}$:
+    \begin{equation*}
+    \ln \bm{Cost}^{(b)}_{t} = \widehat{(\beta_0+\alpha_t)}\bm{\iota}_{N_t} + TL(\bm{y}_{t},\bm{p}_{t},\bm{z}_{t};\bm{\hat{\beta}}^{*}) + \left(I_N - \hat{\rho}W_t\right)^{-1}\hat{\dot{\bm{\varepsilon}}}_t^{(b)}
+    \end{equation*}
+
+    \item \textbf{Re-estimate parameters:} The full two-step estimation procedure, as outlined in Section \ref{sec3:model}, is applied to the dataset with $\ln Cost_{it}^{(b)}$ as the dependent variable.
+\end{enumerate}
+This entire process is repeated $B$ times and the standard error for each parameter $\theta \in \{\rho, \sigma_{\dot{v}}, \sigma_{\dot{u}}\}$ is then calculated as the empirical standard deviation of its $B$ bootstrapped estimates.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This notes in "comment" are for me to be reviewed later
+% this is because I am getting some minor estimates < 0 for u
+\begin{comment}
+
+\paragraph{Network feedback and signs of overall inefficiency}
+
+While the primitive estimates of cost inefficiency, $\mathbb{E}(\dot{u}_{it})$, are non-negative by construction—reflecting that inefficiency in stochastic frontier models is one-sided—it is important to note that the transformed or structural measure of inefficiency, $(I - \rho W_t)^{-1} \mathbb{E}(\dot{u}_t)$, may contain negative elements. At first glance, this seems counterintuitive, as it suggests the presence of "negative inefficiency" in some banks. However, this is not a violation of the model's structure but rather a reflection of a well-known property of network feedback propagation.
+
+In our model, the inefficiency of each bank is not only a function of its own operations but also influenced by the inefficiency of its network neighbors through the term $\rho W_t \varepsilon_t$. When we solve the system for $\varepsilon_t$, we obtain:
+\[
+\varepsilon_t = (I - \rho W_t)^{-1} (\dot{\nu}_t + \dot{u}_t),
+\]
+and thus, the structural inefficiency component becomes:
+\[
+(I - \rho W_t)^{-1} \mathbb{E}(\dot{u}_t).
+\]
+
+Here, $(I - \rho W_t)^{-1}$ plays the role of a **network feedback operator**. In network theory, this matrix captures how shocks or influences—such as inefficiency—propagate through a system of interconnected nodes. While $\mathbb{E}(\dot{u}_t)$ consists of non-negative values, the inverse transformation introduces **attenuation, amplification, and possibly reversal** effects due to the eigenstructure and sparsity of $W_t$. Specifically, banks that are connected to highly inefficient neighbors may experience **indirect "spillovers" of inefficiency**, while banks located in parts of the network with more efficient peers might **benefit from negative feedback loops**, which effectively reduce their relative inefficiency.
+
+This feedback structure is well documented in the spatial econometrics and peer-effects literature, where similar matrices (e.g., spatial or endogenous peer lag matrices) are known to redistribute the original signal across the network in complex ways \citep{bramoulle2009, leenders2002, jackson2010}. Therefore, the appearance of negative values in $(I - \rho W_t)^{-1} \mathbb{E}(\dot{u}_t)$ does not contradict the one-sided nature of inefficiency. Instead, it reflects a **general equilibrium-like effect**: some banks appear relatively more efficient not because they operate at lower primitive inefficiency levels, but because they are embedded in network positions that **buffer or dampen** the inefficiencies of others.
+
+This network correction thus enables a more holistic assessment of bank performance, one that accounts not only for individual shortcomings but also for the broader systemic context in which each bank operates.
+\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data}\label{sec4:data}
+
+Our research utilizes a granular dataset combining detailed records from the Chilean interbank lending market with bank-specific balance sheet characteristics. Access to this confidential administrative data, provided by the Chilean Financial Market Commission (CMF), enables a precise analysis of banking interconnectedness and its impact on performance. As previously noted, our dataset addresses common limitations identified in the literature, where researchers often lack direct measures of micro-level linkages and instead rely on aggregated data or proxy approximations.\footnote{Due to confidentiality concerns, initial model development and preliminary analyses were conducted using anonymized data that preserves essential statistical properties while safeguarding bank identities. Final computational analyses using the complete, non-anonymized dataset were executed exclusively by authorized CMF personnel to ensure data security and confidentiality. External researchers, therefore, did not have direct access to sensitive identifying information.}
+
+Although Chile is a relatively smaller economy compared to global financial hubs such as the United States or Europe, its banking system provides an ideal context for investigating the role of interconnectedness in bank performance for several reasons. First, despite comprising a limited number of institutions—our sample includes 20 banks, virtually representing the entire sector—the Chilean banking system is mature, relatively concentrated, and plays a substantial role proportional to the overall economy \citep{margaretic2021banks}. Such characteristic enhances the visibility and measurability of network dynamics and their effects on individual institutions. Second, and crucially for our empirical strategy, Chile offers exceptional access to detailed administrative datasets. These comprehensive datasets enable the accurate construction of real interbank lending networks using daily transaction records and detailed monthly balance sheets over an extended period (e.g., 2008--2020 in our full dataset). Thus, the high-frequency monthly data introduces a rich temporal dimension ($T$), resulting in a substantial and informative panel dataset. This dataset allows for robust analysis of dynamic network effects and efficiency, offering insights often unavailable from larger systems with less comprehensive data.
+
+%Information on interbank exposures is obtained from regulatory reports (specifically, Form C-18) submitted to the CMF by all active banks in Chile. These reports detail daily bilateral exposures between banks, categorized by financial instruments such as term deposits, repurchase agreements, overnight loans, and derivatives. For our analysis, we rely on monthly aggregated data provided by the CMF, which consolidates detailed daily administrative records on interbank transactions. The information includes total bilateral exposures between each pair of banks active in the market each month, differentiated by three maturity categories: short-, medium-, and long-term loans. This granular approach enables us to construct precise time-varying adjacency matrices ($W_t$), accurately capturing the network structure based on actual interbank lending relationships. This direct measurement significantly contrasts with previous approaches relying on indirect proxies, such as geographical proximity or portfolio correlations. 
+
+Information on interbank exposures is obtained from regulatory reports submitted by all active banks in Chile to the CMF. Specifically, we use Form C-18, titled Daily Balances of Obligations with Other Domestic Banks (\emph{Saldos Diarios de Obligaciones con Otros Bancos del País}, in Spanish), which details all daily bilateral exposures between institutions. These reports are comprehensive, categorizing obligations across a range of financial instruments, including current accounts, other sight obligations, repurchase agreements, term deposits, and financial derivative contracts. Furthermore, the data differentiates exposures by residual maturity using three specific categories: sight obligations, obligations with maturity up to one year, and obligations with maturity over one year. The data also classifies each obligation by its currency of payment, distinguishing between non-indexed Chilean pesos, indexed domestic currency, and foreign currency.
+
+For the main round of results presented in this paper, we construct the weights matrix ($W_t$) using a comprehensive measure of total interbank obligations. The weight of the connection between any two banks is defined as the sum of all reported financial instruments (including term deposits, repurchase agreements, and derivatives) across all available maturity categories (sight, up to one year, and over one year). Consistent with the C-18 reporting structure, our network is directed, with edges running from the borrower (the reporting institution) to the lender (the creditor institution). After aggregating the data to a monthly frequency, we apply a row-normalization to the resulting time-varying adjacency matrices. This is a standard and effective way to measure the relative importance of each lender to a specific borrower, as the normalized weight represents a lender's share of a given borrower's total obligations.
+
+While this comprehensive matrix based on total obligations forms the basis of our core results, we leverage the granularity and depth of our administrative data to explore alternative specifications of $W_t$ in a subsequent section. These alternative settings—which consider different combinations of financial instruments and maturities, alternative normalization methods, and the reverse lender-to-borrower direction—serve as both robustness checks and a method for analyzing potential transmission channels. The ability to construct and test these varied network specifications using direct, dynamic, and detailed transaction data provides a uniquely rich framework for analyzing the multifaceted role of interconnectedness.
+
+Complementing the interbank exposure data, we employ comprehensive bank-specific financial information from monthly balance sheets submitted to the CMF (Form MB-2). These reports provide detailed information on each bank's financial position, operational activities, and risk profiles.
+
+The final dataset is constructed as a monthly panel that combines bilateral interbank exposure data—used to define the network structures ($W_t$)—with detailed bank-specific balance sheet variables for the full set of the 20 most important banks operating in Chile. This rich, panel-structured dataset allows for robust empirical analysis of banking performance through advanced econometric techniques designed for panel and network data, while effectively controlling for bank heterogeneity and time-specific effects.
+
+\textbf{Note:} Although our full dataset spans from 2008 to 2020, covering virtually the entire Chilean interbank market, this preliminary analysis (working paper) utilizes data for the period from January 2016 to December 2017. To ensure comparability over time, all nominal variables have been deflated using the Chilean Consumer Price Index (CPI), with 2018 as the base year.
+
+\subsection{Variable Definitions for the Cost Function Estimation}
+
+Following the standard intermediation approach in the banking literature \citep[e.g.,][]{sealey1977,malikov2015}, we define bank outputs, inputs, and input prices based on the balance sheet information derived from the CMF data.
+
+\begin{table}[H]
+\caption{{Variable Definitions and Statistics}}
+\label{tab:variables}
+\centering\medskip\footnotesize\begin{spacing}{1.3}
+\scalebox{0.9}{ \color{black} \begin{tabular}{ll*{5}{c}}
+
+\textbf{Variable} & \textbf{Description} & \textbf{Mean} & \textbf{Min.} & \textbf{Max.} & \textbf{Std. Dev.}\\
+
+\midrule
+\multicolumn{2}{l}{\textbf{Outputs ($\bm{y}$):}} & & & & \\
+$y_1$ & Commercial loans & 7447258 & 0 & 127254619 & 16671362 \\ 
+$y_2$ & Real estate loans (Mortgages) & 3333666 & 0 & 68397203 & 8015098 \\ 
+$y_3$ & Consumer loans & 1597754 & 0 & 27530158 & 3710158 \\ 
+$y_4$ & Securities and other investments & 1663284 & 0 & 55740117 & 4220972 \\ 
+
+\addlinespace
+\multicolumn{2}{l}{\textbf{Inputs ($\bm{x}$) and their Prices ($\bm{p}$):}} & & & & \\
+$x_1$ & Labor & 3312 & 20 & 11521 & 3681 \\ 
+$x_2$ & Physical capital (Fixed assets) & 113510 & 0 & 1466479 & 256413 \\ 
+$x_3$ & Deposits and other borrowed funds & 10349058 & 0 & 180746605 & 23321380 \\ 
+$p_1$ & Labor price & -108972 & -2853901 & 0 & 277452 \\ 
+$p_2$ & Physical capital price & -5665 & -147212 & 0 & 14416 \\ 
+$p_3$ & Price of funds & -242834 & -6183112 & 30306 & 615377 \\ 
+
+\addlinespace
+\multicolumn{2}{l}{\textbf{Quasi-fixed Input:}} & & & & \\
+$z_1$ & Equity capital & 1447764 & 0 & 24272083 & 3195097 \\ 
+
+\addlinespace
+\multicolumn{2}{l}{\textbf{Cost:}} & & & & \\
+$C$ & Total variable operating cost & -377345 & -9790558 & 0 & 949620 \\ 
+\bottomrule[0.5mm]
+
+\end{tabular}}
+
+\captionsetup{width=.8\textwidth}\caption*{\footnotesize \emph{Notes}: 1. The table reports the variables employed in the translog cost function. 2. Labor refers to the total number of workers. 3. All monetary values, except for Labor, are expressed in thousands of Chilean pesos. 4. Real values were computed using the 2018 CPI from the Central Bank of Chile. 5. Std. Dev. in the last column denotes the standard deviation.}
+
+\end{spacing}\end{table}
+
+
+
+\noindent
+We specify four output categories representing key earning assets: commercial loans, real estate loans, consumer loans, and securities and other investments. All outputs are measured in real Chilean Pesos of 2018.
+
+Variable inputs include labor, measured by total personnel expenses and number of employees; physical capital, represented by the book value of fixed and leased assets; and borrowed funds (including deposits). Input prices are computed by dividing the respective expenses by the input quantities.
+
+We include equity capital as a quasi-fixed input to control for bank heterogeneity and scale. Total variable operating cost is constructed as the sum of interest expenses, commissions, personnel expenses, and selected administrative expenses, excluding depreciation to avoid double counting with the capital input price.
+
+
+$$\,$$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}\label{sec5:results}
+
+\subsection{The Cost Function and Network Dependence}
+As previously discussed, while the first-stage allows us to obtain the central parameters in the empirical cost function, $\bm{\beta}$, the second-stage GMM estimation enables the quantification of the average degree of interdependence in bank cost performance deviations, through the parameter $\rho$, and the key standard deviations in the Cost Function. Given the large numbers of terms in the vector, and as it is common in the literature, for the estimated trans-log cost function we mainly report key associated results, such as the standard deviations that allow the differentiation of the two components in the composited residual and the computation of the estimates of cost efficiency.
+
+Our estimation, reported in Table \ref{tab:main}, yields $\hat{\rho} = \inpmod{rho}$, which is statistically significant. The negative estimate indicates a negative correlation in inefficiency deviations among interconnected banks. In other words, a bank linked to peers exhibiting higher-than-average inefficiency tends to show lower adjusted inefficiency itself. This pattern suggests that banks connected to less efficient neighbors, on average, operate more efficiently relative to their own expected cost levels. Such a finding is consistent with the notion that banks may face competitive pressures or engage in negative benchmarking—improving their efficiency by observing and avoiding the mistakes made by underperforming peers. These dynamics point to meaningful network effects, potentially driven by strategic responses to peer underperformance or by negative learning mechanisms, wherein banks adapt their strategies after witnessing adverse outcomes among their counterparts.
+
+In the following subsections we present relevant post-estimation results, including bank-level inefficiency scores and a decomposition of the relative contributions of direct and network effects to overall performance. We conclude by exploring potential mechanisms underlying the observed negative network dependence.
+%Exploring these channels requires further investigation,... but the finding highlights that interbank connections, beyond facilitating liquidity or contagion, are also associated with the relative cost performance of linked institutions.
+
+% NExt: talk here about the other results in the mean inefficiency that should be added to the table later... see Chris''s paper
+
+% Table 2: Main Results
+\begin{table}[H]
+\caption{{Results for the central parameters}}
+\label{tab:main}
+\centering\footnotesize
+\begin{spacing}{1.3}\scalebox{0.97}{ \color{black}
+\begin{tabular}{l*{3}{c}}
+\toprule[0.5mm]
+\addlinespace
+      & \textbf{M1} & \textbf{M2} & \textbf{M3} \\
+\cmidrule{2-4}
+      & Baseline & With Risk & Determinants \\
+\addlinespace
+\hline
+\addlinespace
+\multicolumn{4}{l}{\emph{Panel A. Interconnectedness parameter}} \\
+$\bm{\rho}$  & \textbf{\inpmod{M1_rho}}$\,^{\text{\inpmod{M1_rho_pval}}}$ & \textbf{\inpmod{M2_rho}}$\,^{\text{\inpmod{M2_rho_pval}}}$ & \textbf{\inpmod{M3_rho}}$\,^{\text{\inpmod{M3_rho_pval}}}$ \\
+             & (\inpmod{M1_rho_se}) & (\inpmod{M2_rho_se}) & (\inpmod{M3_rho_se}) \\
+\addlinespace
+\multicolumn{4}{l}{\emph{Panel B. Cost frontier main parameters}} \\
+$\sigma_{\dot{\nu}}$  & \inpmod{M1_sv}$\,^{\text{\inpmod{M1_sv_pval}}}$ & \inpmod{M2_sv}$\,^{\text{\inpmod{M2_sv_pval}}}$ & \inpmod{M3_sv}$\,^{\text{\inpmod{M3_sv_pval}}}$ \\
+                      & (\inpmod{M1_sv_se}) & (\inpmod{M2_sv_se}) & (\inpmod{M3_sv_se}) \\
+$\sigma_{\dot{u}}$    & \inpmod{M1_su}$\,^{\text{\inpmod{M1_su_pval}}}$ & \inpmod{M2_su}$\,^{\text{\inpmod{M2_su_pval}}}$ & \\
+                      & (\inpmod{M1_su_se}) & (\inpmod{M2_su_se}) & \\
+\addlinespace
+\multicolumn{4}{l}{\emph{Panel C. Inefficiency determinants (M3)}} \\
+$\delta_0$ (Constant)  & & & \inpmod{M3_delta_const}$\,^{\text{\inpmod{M3_delta_const_pval}}}$ \\
+                       & & & (\inpmod{M3_delta_const_se}) \\
+$\delta_1$ (Ownership) & & & \inpmod{M3_delta_d_ownership}$\,^{\text{\inpmod{M3_delta_d_ownership_pval}}}$ \\
+                       & & & (\inpmod{M3_delta_d_ownership_se}) \\
+$\delta_2$ (Segment)   & & & \inpmod{M3_delta_d_segment}$\,^{\text{\inpmod{M3_delta_d_segment_pval}}}$ \\
+                       & & & (\inpmod{M3_delta_d_segment_se}) \\
+\addlinespace
+\hline
+Controls in the Translog Cost Function & Yes & Yes & Yes \\
+Time fixed effects                      & Yes & Yes & Yes \\
+Observations                            & 418 & 418 & 418 \\
+\bottomrule[0.5mm]
+\end{tabular}
+}
+\captionsetup{width=.7\textwidth}
+\caption*{
+\footnotesize
+\emph{Notes}:
+1. The table reports the central results for the parameters in equations \eqref{eq:model_part1} and \eqref{eq:model_part2}. M1 is the baseline spatial cost frontier; M2 adds a capital adequacy ratio as risk regressor; M3 replaces the scalar $\sigma_u$ with inefficiency determinants ($\delta$ vector). The `Controls in the Translog Cost Function' row indicates the inclusion of all first-order, second-order (squared), and interaction terms for outputs, input prices, and quasi-fixed inputs as specified in the translog cost function $TL(\bm{y}_{it}, \bm{p}_{it}, \bm{z}_{it}; \bm{\beta}^*)$ in equation \eqref{eq:model_part1}.
+2. Data: Chilean banking system (2016m1–2018m1).
+3. Standard errors (in parentheses) computed via wild bootstrap.
+4. *** significant at 1\%; ** 5\%; * 10\%.
+}
+\end{spacing}
+\end{table}
+
+
+\subsection{Baseline Banking Performance: Cost Efficiency Levels}
+
+We first briefly present the baseline estimates of banking cost efficiency derived from our stochastic cost frontier model. This initial overview serves to characterize the general performance landscape of the Chilean banking industry and to verify that our estimates, despite the econometric novelties introduced, align broadly with findings from previous research on this sector.
+
+Figure \ref{fig:technical_efficiency_scores} illustrates the empirical distribution and temporal evolution of the technical efficiency scores, calculated as $TE_{it} = \exp(-\hat{\mu}_{it})$, where $\hat{\mu}_{it}$ is the estimated cost inefficiency presented in subsection \ref{sec3:model-post}. Panel (a) of the figure shows the kernel density estimate of these scores, and Panel (b) presents a time series of monthly boxplots illustrating their distribution. The results suggest that the Chilean banking system generally operates at high levels of cost efficiency. The scores are predominantly concentrated towards the upper end of the scale, with a central tendency suggesting typical efficiency levels around 90\% (i.e., a TE score of approximately 0.9). While exhibiting some cross-sectional heterogeneity, these efficiency levels are relatively stable over the observed period. These initial findings are consistent with other empirical assessments of the Chilean banking industry \citep[e.g.,][]{cobas2024}, which supports our model’s baseline characterization of bank performance as a necessary preliminary step before analyzing network effects.
+
+% Figure: Technical Efficiency Scores 
+\begin{figure}[h]\centering
+ \caption{Technical Efficiency Scores}
+ \label{fig:technical_efficiency_scores}
+    \begin{subfigure}[b]{0.47\textwidth}\centering
+		\includegraphics[width=\textwidth]{figures/Kden_Tech_Eff.pdf}
+		\caption{Distribution}
+    \end{subfigure}
+	\hspace{0.2cm}%\hfill
+    \begin{subfigure}[b]{0.47\textwidth}\centering
+		\includegraphics[page=1,width=\textwidth]{figures/BoxPlot_Tech_Eff.pdf}
+		\caption{Temporal Evolution}
+    \end{subfigure}
+{\captionsetup{width=0.9\textwidth}
+\caption*{\footnotesize \emph{Notes}: The figure has two panels and presents the Distribution and Temporal Evolution of Bank Technical Efficiency Scores (2016m01--2017m12). Panel (a) displays the kernel density estimate of technical efficiency scores pooled across all banks and months in the sample period. Panel (b) presents a time series of monthly boxplots, illustrating the distribution of these scores for selected months. Technical efficiency scores (TE$_{it}$) are calculated as the exponential of the negative estimated cost inefficiency term, i.e., TE$_{it} = \exp(-\hat{\mu}_{it})$.}}
+\end{figure}
+
+%%%
+\subsection{Interconnectedness and Banking Performance}
+
+The statistically significant network dependence parameter ($\hat{\rho}$) presented in Table \ref{tab:main} provides initial empirical evidence for the role of interbank interconnectedness in shaping banking performance within our dataset, an overall result that aligns with previous findings on peer effects \citep{margaretic2021banks}. A key novelty of our econometric approach, however, is its ability to leverage this estimated parameter and the weights matrix ($W_t$) to quantify the importance of such interconnectedness. This is achieved by decomposing the total estimated cost inefficiency into a Direct Effect component (representing Idiosyncratic Inefficiency, $s_{ii}\hat{\dot{\mu}}_{it}$) and an Indirect (Network) Effect component ($\sum_{j \neq i} s_{ij}\hat{\dot{\mu}}_{jt}$), as detailed in Subsection \ref{sec3:model-post}.
+
+We find that the Indirect (Network) Effect component is, on average, negative. This finding is directly associated with our negative estimate for the network dependence parameter ($\hat{\rho} = \inpmod{rho}$), given that the underlying, network-independent inefficiency estimates ($\hat{\dot{\mu}}_{it}$ from Equation \ref{eq:u_conditional_exp}) and the elements of the weights matrix ($W_t$) are non-negative. Specifically, a negative $\hat{\rho}$ introduces negative dependencies within the network multiplier matrix $S(\hat{\rho}, W_t)$. Consequently, for a bank connected to peers with higher underlying inefficiency, the network effect tends to yield a net reduction in that bank's total cost inefficiency, relative to its own Direct Effect component.
+
+Figure \ref{fig:kden_decomp} visually presents this efficiency-enhancing role of network interactions in the Chilean interbank market. The figure presents kernel density estimates comparing the distributions of the Idiosyncratic Inefficiency component (Direct Effect, red line) and the final Total Inefficiency estimate (blue line) across all bank-period observations. A clear leftward shift is observed for the distribution of Total Inefficiency relative to that of the Idiosyncratic Inefficiency. This displacement means that the predominantly negative Indirect (Network) Effects lead to Total Inefficiency levels that are, on average, lower than what would be implied by banks' idiosyncratic components alone. Thus, the interconnections within the interbank lending market, as captured by our model, appear to play a significant role in improving overall cost efficiency in the sector.
+
+\begin{figure}[H]
+\caption{Kernel Density of the Direct and Total Effects}
+\label{fig:kden_decomp}\centering
+\includegraphics[width = 0.6\textwidth]{figures/Kden_Direct_Total_Eff.pdf}
+\captionsetup{width=.75\textwidth}
+\caption*{\footnotesize \emph{Notes:} 
+The figure contains two kernel density plots. These depict estimates of the Direct or Idiosyncratic component of cost inefficiency (red line) and the Total component (blue line), with data pooled across all banks and months in the sample period.}
+\end{figure}
+
+To further quantify the economic significance of the network effects—suggested by the leftward shift in the inefficiency distributions shown in Figure \ref{fig:kden_decomp}—we introduce an intuitive metric termed ``Efficiency Gain.'' This measure captures the percentage reduction in a bank's cost inefficiency attributable to network interactions, relative to its Direct (Idiosyncratic) Effect. Formally, it is computed as $(1 - \text{Total Inefficiency}_{it} / \text{Direct Effect}_{it}) \times 100\%$.\footnote{This formulation stems from the decomposition Total Inefficiency = Direct Effect + Indirect Effect. Thus, the gain is $1 - \frac{\text{Direct Effect} + \text{Indirect Effect}}{\text{Direct Effect}}$. Since our estimated Indirect Effect is predominantly negative (indicating an efficiency improvement), this formula quantifies the positive percentage gain. For instance, if Direct Effect = 0.10 and Total Inefficiency = 0.07, the gain is $(0.10-0.07)/0.10 = 0.30$ or $30\%$. A small number of observations yielding extreme gain values (e.g., those initially above the 95th percentile), often resulting from division by Direct Effect values close to zero.}
+
+Figure \ref{fig:efficiency_gains} illustrates the temporal evolution of these efficiency gains through monthly boxplots for the 2016m01--2017m12 period, while Table \ref{tab:efficiency_gains} provides their overall descriptive statistics. The results highlight the benefits of networks, as measured by interbank loans, in the Chilean industry. The median bank-period observation experiences an efficiency gain of approximately 20\%, indicating a substantial reduction in operational costs attributable to network effects beyond its own idiosyncratic baseline. The considerable range of gains also shows significant heterogeneity in how different banks leverage, or are affected by, network interactions. Thus, our findings reinforce that interconnectedness not only influences the shape of the inefficiency distribution but also translates into economically meaningful improvements in cost efficiency for a significant portion of the Chilean banking sector.
+
+% Figure: Efficiency Gains Boxplots
+\begin{figure}[H] % Using [H] from float package to try and place it here
+\centering
+ \caption{Temporal Evolution of Network-Driven Efficiency Gains (\%)}
+ \label{fig:efficiency_gains}
+    \includegraphics[width=0.6\textwidth]{figures/BoxPlot_EffGains.pdf}
+{\captionsetup{width=0.6\textwidth} % Adjusted width slightly
+\caption*{\footnotesize\emph{Notes:} The figure presents a time series of monthly boxplots illustrating the distribution of Efficiency Gains for selected months over 2016m01--2017m12. Efficiency Gains are calculated as $(1 - \text{Total Inefficiency}_{it}/\text{Direct Effect}_{it})$. The horizontal dashed red line indicates the overall mean value of these gains across the sample period.}}
+\end{figure}
+
+% Table: Descriptive Statistics for Efficiency Gains
+\begin{table}[H] % Using [H] from float package
+\caption{Descriptive Statistics for Network-Driven Efficiency Gains}
+\label{tab:efficiency_gains} % Corrected label to match text
+\centering\medskip\footnotesize\begin{spacing}{1.3}
+\scalebox{0.97}{ \color{black} \begin{tabular}{l*{6}{c}}
+\toprule[0.5mm]\addlinespace
+ & \textbf{Min.} & \textbf{1st Qu.} & \textbf{Median} & \textbf{Mean} & \textbf{3rd Qu.} & \textbf{Max.}  \\
+\midrule
+\addlinespace
+Value & 0.000 & 0.171 & 0.354 & 0.384 & 0.548 & 0.990 \\
+\bottomrule[0.5mm]
+\end{tabular}}
+\captionsetup{width=0.8\textwidth} % Adjusted width slightly
+\caption*{\footnotesize \emph{Note}: The table reports descriptive statistics for the Efficiency Gain metric over the period 2016m01--2017m12, calculated as $(1 - \text{Total Inefficiency}_{it}/\text{Direct Effect}_{it})$. Total Inefficiency and Direct Effect components are derived from the stochastic cost frontier estimation.}
+\end{spacing}\end{table}
+
+
+
+%%%%%%%%%%%%%%%%
+\subsection{Exploring Alternative Network Specifications as Robustness Checks and Channel Analysis}
+
+Our central finding of a negative network dependence parameter ($\hat{\rho} \approx \inpmod{rho_round}$), suggesting that interconnectedness is associated with improved cost efficiency (lower inefficiency), aligns with several plausible economic mechanisms. Banks may experience heightened competitive pressures from their interconnected peers, incentivizing cost optimization. Alternatively, they might engage in learning or benchmarking behaviors, specifically `negative benchmarking,' where banks actively observe and avoid operational inefficiencies exhibited by connected institutions. 
+
+A rigorous empirical disentanglement of these specific channels is complex and may be beyond the scope of this paper. Nevertheless, we leverage the richness of our administrative data (Form C-18) to explore how our findings hold up under alternative definitions of the network adjacency matrix ($W_t$). By systematically varying the underlying financial instruments and maturity categories that define the network, we can conduct comprehensive robustness checks of our main finding. Additionally, observing how the results change across these specifications allows us to conjecture about the potential mechanisms at play. For example, if network effects are stronger for certain types of obligations, it may suggest which kinds of interbank relationships are the primary conduits for these efficiency-enhancing spillovers.
+
+%A rigorous empirical disentanglement of these specific channels poses significant challenges, primarily due to limitations in detailed data on strategic interactions or learning processes. Nevertheless, we leverage the richness of administrative data provided by Form C-18 to explore alternative definitions of the network adjacency matrix ($W_t$). By systematically varying the weight definitions—first, according to maturity categories (sight obligations, obligations up to one year, and those exceeding one year), second, through different combinations of financial instruments (including repurchase agreements, term deposits, and derivative contracts), and third, via alternative normalization methods and directional configurations—we conduct comprehensive robustness checks of our core findings. Additionally, these alternative network specifications allow us to conjecture about potential mechanisms underlying the observed effects. For example, analyzing networks by maturity may reveal whether short-term obligations, indicative of immediate liquidity or operational decisions, have different implications for competitive or benchmarking pressures compared to longer-term obligations. Similarly, exploring variations by financial instruments may indirectly illuminate whether specific transaction types are more conducive to information transmission or strategic learning across banks.
+
+\subsubsection{Robustness to Network Definition by Maturity}
+We first exploit the maturity information in the C-18 data to construct three distinct versions of the adjacency matrix $W_t$, each based on the total value of obligations within a specific maturity category. Table \ref{tab:results_w_maturity} presents the estimation results for networks defined by: (1) `Overnight/at sight` obligations, (2) obligations with maturity `Up to one year`, and (3) obligations with `More than one year` maturity. The final column reports our baseline model, which uses all obligations combined.
+
+We find no statistically significant network effect when interconnectedness is defined solely by at-sight obligations. This suggests that these very short-term exposures, likely reflecting daily operational liquidity management, may not be the primary channel for the strategic interactions that influence overall cost efficiency. Conversely, networks based on obligations with longer maturities exhibit strong, statistically significant, and negative dependence parameters. For obligations up to one year ($\hat{\rho} = -0.455^{***}$) and those exceeding one year ($\hat{\rho} = -0.295^{***}$), interconnectedness is robustly associated with improved cost efficiency. The effect is largest in magnitude for the intermediate `Up to one year` category. This may indicate that relationships with this maturity—which likely reflect core operational financing and risk management decisions beyond immediate liquidity needs—are particularly important conduits for competitive pressures or active benchmarking among banks.
+
+%We find no statistically significant effect of network interconnectedness when the adjacency matrix includes only overnight or at sight obligations (column 1). This result may suggest that very short-term exposures alone—typically reflecting immediate liquidity management needs—do not significantly influence efficiency spillovers between banks. Conversely, obligations with longer maturities exhibit significant network dependence parameters. Specifically, for maturities up to one year (column 2, $\hat{\rho} = -0.455^{***}$) and for obligations longer than one year (column 3, $\hat{\rho} = -0.295^{***}$), interconnectedness strongly associates with improved bank efficiency (reduced inefficiency). Notably, the magnitude of the effect is larger for maturities up to one year, suggesting that short-to-medium-term obligations might be particularly conducive to competitive pressures or active benchmarking behaviors among banks, thereby promoting stronger efficiency-enhancing incentives. The intermediate maturity obligations may reflect operational financing decisions directly related to active liquidity and risk management, potentially driving banks to optimize their operational costs more aggressively.
+
+
+% Table: Results by maturity
+\begin{table}[H]
+\caption{Model Results for Networks Defined by Obligation Maturity}
+\label{tab:results_w_maturity}
+\centering\footnotesize
+\begin{spacing}{1.3}
+\scalebox{0.95}{\color{black} 
+\begin{tabular}{l*{4}{c}}
+\toprule[0.5mm]
+\addlinespace
+Obligations      & \textbf{Overnight/} & \textbf{Up to} & \textbf{More than} & \textbf{All Obligations} \\
+      & \textbf{at sight} & \textbf{one year} & \textbf{one year} & \textbf{(Baseline)} \\
+\addlinespace
+\hline
+\addlinespace
+\multicolumn{5}{l}{\emph{Panel A. Interconnectedness parameter}} \\
+$\bm{\rho}$              & 0.009          & -0.455$^{***}$ & -0.295$^{***}$ & -0.542$^{***}$ \\
+                         & (0.064)        & (0.115)        & (0.068)        & (0.112)        \\
+\addlinespace
+\multicolumn{5}{l}{\emph{Panel B. Cost frontier main parameters}} \\
+$\sigma_{\dot{\nu}}$     & 0.110$^{***}$  & 0.101$^{***}$  & 0.107$^{***}$  & 0.102$^{***}$  \\
+                         & (0.004)        & (0.005)        & (0.008)        & (0.011)        \\
+$\sigma_{\dot{u}}$       & 0.016$^{***}$  & 0.022$^{***}$  & 0.019$^{***}$  & 0.013$^{***}$  \\
+                         & (0.005)        & (0.005)        & (0.004)        & (0.005)        \\
+\addlinespace
+\hline
+Controls in the Translog Cost Function & Yes & Yes & Yes & Yes \\
+Time fixed effects                      & Yes & Yes & Yes & Yes \\
+Observations                            & 418 & 418 & 418 & 418 \\
+\bottomrule[0.5mm]
+\end{tabular}
+}
+\captionsetup{width=.95\textwidth}
+\caption*{
+\footnotesize 
+\emph{Notes}: 
+1. The table reports the central results for the parameters in equations \eqref{eq:model_part1} and \eqref{eq:model_part2}. The `Controls in the Translog Cost Function' row indicates the inclusion of all first-order, second-order (squared), and interaction terms for outputs, input prices, and quasi-fixed inputs as specified in the translog cost function $TL(\bm{y}_{it}, \bm{p}_{it}, \bm{z}_{it}; \bm{\beta}^*)$ in equation \eqref{eq:model_part1}. 2. Data: Chilean banking system (2016m1–2017m12). 3. Standard errors (in parentheses) computed via wild bootstrap. 4. $^{***}$ significant at 1\%; $^{**}$ 5\%; $^{*}$ 10\%.
+}
+\end{spacing}
+\end{table}
+
+
+\subsubsection{Robustness to Network Definition by Financial Instrument}
+
+We now explore the sensitivity of our findings by examining variations in the construction of the interbank network adjacency matrix ($W_t$) based on different combinations of financial instruments reported in Form C-18. Specifically, we construct alternative versions of $W_t$ as follows: first, we define a network based exclusively on financial derivative contracts (\emph{Derivatives Only}); second, we define an unsecured exposure network by subtracting collateral values from total obligations, thus isolating pure credit risk exposures (\emph{Unsecured Exposures}); and third, we construct a traditional funding network using only term deposits (\emph{Term Deposits Only}). Finally, we include our baseline network constructed from total obligations, which encompasses all instruments (\emph{All Obligations (Baseline)}), for comparison.
+
+Overall, the results presented in Table~\ref{tab:variations_W_instruments} strongly support the robustness of our central finding. The consistently significant and negative network dependence parameter across all specifications indicates that the efficiency-enhancing effect is not driven by a single type of instrument. However, the results from these different specifications allow us to conjecture about the potential channels at play. For instance, the significant effect in the \emph{Derivatives Only} network suggests that interactions related to risk management and hedging activities may serve as a channel for learning or benchmarking best practices. Similarly, the strong effect observed for \emph{Unsecured Exposures} may highlight the role of heightened market discipline; the absence of collateral could intensify incentives for banks to actively monitor counterparts and to operate more efficiently to signal their creditworthiness. Finally, the finding for the \emph{Term Deposits} network confirms that these efficiency-enhancing pressures are also present within the most traditional interbank funding markets, likely reflecting competitive forces. Collectively, these results suggest that the positive impact of interconnectedness on efficiency is a multifaceted phenomenon, driven by a combination of risk management benchmarking, heightened market discipline, and traditional competitive pressures.
+
+% Table: Comparison by Instrument or Oblugation Type
+\begin{table}[H]
+\caption{Model Results for Networks Defined by Financial Instrument Type}
+\label{tab:variations_W_instruments}
+\centering\footnotesize
+\begin{spacing}{1.3}
+\scalebox{0.97}{\color{black} 
+\begin{tabular}{l*{4}{c}}
+\toprule[0.5mm]
+\addlinespace
+      & \textbf{Derivatives} & \textbf{Unsecured} & \textbf{Term } & \textbf{All Obligations} \\
+      & \textbf{Only} & \textbf{Exposures} & \textbf{Deposits} & \textbf{(Baseline)} \\
+\addlinespace
+\hline
+\addlinespace
+\multicolumn{5}{l}{\emph{Panel A. Interconnectedness parameter}} \\
+$\bm{\rho}$              & -0.360$^{***}$ & -0.540$^{***}$ & -0.372$^{***}$ & -0.542$^{***}$ \\
+                         & (0.064)        & (0.111)        & (0.117)        & (0.112)        \\
+\addlinespace
+\multicolumn{5}{l}{\emph{Panel B. Cost frontier main parameters}} \\
+$\sigma_{\dot{\nu}}$     & 0.107$^{***}$  & 0.102$^{***}$  & 0.106$^{***}$  & 0.102$^{***}$  \\
+                         & (0.013)        & (0.012)        & (0.005)        & (0.011)        \\
+$\sigma_{\dot{u}}$       & 0.017$^{***}$  & 0.013$^{***}$  & 0.019$^{***}$  & 0.013$^{***}$  \\
+                         & (0.004)        & (0.004)        & (0.004)        & (0.005)        \\
+\addlinespace
+\hline
+Controls in the Translog Cost Function & Yes & Yes & Yes & Yes \\
+Time fixed effects                      & Yes & Yes & Yes & Yes \\
+Observations                            & 418 & 418 & 418 & 418 \\
+\bottomrule[0.5mm]
+\end{tabular}
+}
+\captionsetup{width=.9\textwidth}
+\caption*{
+\footnotesize 
+\emph{Notes}: 
+1. The table reports the central results for the parameters in equations \eqref{eq:model_part1} and \eqref{eq:model_part2}. The `Controls in the Translog Cost Function' row indicates the inclusion of all first-order, second-order (squared), and interaction terms for outputs, input prices, and quasi-fixed inputs as specified in the translog cost function $TL(\bm{y}_{it}, \bm{p}_{it}, \bm{z}_{it}; \bm{\beta}^*)$ in equation \eqref{eq:model_part1}. 2. Data: Chilean banking system (2016m1–2017m12). 3. Standard errors (in parentheses) computed via wild bootstrap. 4. $^{***}$ significant at 1\%; $^{**}$ 5\%; $^{*}$ 10\%.
+}
+\end{spacing}
+\end{table}
+
+\subsubsection{Other Specifications and Mechanisms (Ongoing Research)}
+
+\textit{(Further work is in progress to explore additional specifications, including changing the network directionality from borrower-to-lender to lender-to-borrower and employing alternative normalization methods. We are also developing formal tests to explore the roles of market competition and other network characteristics—such as centrality or concentration indices—in mediating the observed efficiency effects.)}
+
+%%%% ACAAAAA VOYYYYYYY ...  
+% - IDEA FOR THE PLOT OF NETWROKS AT THE END: CHECK USING CLUSTERS (COLOR) BY DOTS BASED ON EFFICIENCY ESTIMATES (P50)... SIZE OF NODE BASE OF SIZE OF THE BANK ... SIZE OF LINES BASED ON INTERBANK LOANS.... ALSO NEED TO THINK ABOUT POTENTIAL INTERPRETATION.
+
+
+% Figure with 
+%\begin{figure}[h]\centering
+% \caption{Interbank Network Interconnectedness and Estimated Cost Inefficiency.}\label{fig:netw_and_uhat}
+%    \begin{subfigure}[b]{0.45\textwidth}\centering
+%		\includegraphics[width=\textwidth]{figures/network_uhat_201604.pdf}
+%		\caption{2016m06}
+%    \end{subfigure}
+%	\hspace{1.0cm}%\hfill
+%    \begin{subfigure}[b]{0.45\textwidth}\centering
+%		\includegraphics[page=1,width=\textwidth]{figures/network_uhat_201703.pdf}
+%		\caption{2017m03}
+%    \end{subfigure}
+%    \begin{subfigure}[b]{0.5\textwidth}\centering
+%		\includegraphics[page=1,width=\textwidth]{figures/network_uhat_201712.pdf}
+%		\caption{2017m12}
+%    \end{subfigure}
+%{\captionsetup{width=0.9\textwidth}\caption*{\footnotesize\emph{Notes:} 1. The figure has three panels. 2. Each panel illustrates the .}}
+%\end{figure}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{(Preliminary) Conclusions}\label{sec6:conc}
+
+This paper research the influence of bank interconnectedness, as measured through the interbank lending market, on operational cost efficiency within the Chilean banking sector. Motivated by the extensive literature focusing primarily on the systemic risk and financial contagion aspects of financial networks, especially during crises, our study aimed to contribute to the less explored domain of how these network structures shape banking performance and efficiency during periods of relative economic stability.
+
+Utilizing unique, transaction-level administrative data from the Chilean Financial Market Commission (CMF) for the period 2008–2020, we constructed time-varying network adjacency matrices ($W_t$) representing actual interbank lending relationships. To analyze these rich data, we employed a novel two-step Generalized Method of Moments (GMM) estimation strategy within a stochastic frontier analysis (SFA) framework. This approach integrated network dependencies via a spatial/network autoregressive parameter ($\rho$) in a flexible translog cost function, enabling the estimation of bank-specific cost inefficiencies while controlling for unobserved heterogeneity and network influences.
+
+Our empirical analysis reveals robust evidence that interconnectedness is a statistically significant determinant of bank cost efficiency in Chile. We estimate an average network dependence parameter ($\hat{\rho}$) of approximately \inpmod{rho_round}, suggesting that, on average, network connections in the Chilean interbank market are associated with improved cost efficiency (i.e., lower cost inefficiency). Density estimates show a leftward shift in the distribution of total cost inefficiency relative to its idiosyncratic (Direct Effect) component. Quantifying this impact, our decomposition analysis reveals that network effects contribute to a significant ``Efficiency Gain''; for the median bank-period observation, these network interactions account for a reduction in cost inefficiency of approximately \inpmod{p50EG}percentage points, relative to the bank's idiosyncratic baseline. These findings suggest that interbank networks may facilitate mechanisms such as competitive pressures or enhanced benchmarking opportunities, leading to tangible improvements in operational efficiency.
+
+This study makes several contributions. Primarily, it extends empirical evidence beyond the traditional focus on systemic risks by providing quantitative insights into how interbank relationships concretely influence bank operational performance under normal economic conditions. Methodologically, our work demonstrates the application of advanced econometric techniques that effectively incorporate network dependencies with time-varying structures into stochastic frontier models using granular administrative data, specifically within a multi-output cost function context for banking. From a policy perspective, the findings highlight that interbank network structures are not only conduits of potential systemic risk but also critical elements influencing the efficiency and operational strength of the banking sector. Consequently, understanding and monitoring these network dynamics is essential for policymakers aiming to support robust, efficient, and stable financial systems that underpin broader economic health.
+
+Given these preliminary results, avenues for future research include a deeper investigation into the specific channels through which interconnectedness translates into efficiency gains. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newpage
+%\begin{appendices}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Translog Cost Function}\label{app:costfn}
+
+%.
+
+%\end{appendices}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\nocite{}
+\bibliographystyle{chicago}
+\bibliography{banking}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\textbf{A note on Sorting/Homophily Concern:}
+
+Potential \emph{sorting} or \emph{homophily} in interbank relations could, in principle, bias the estimated network dependence parameter ($\rho$). If banks with similar characteristics (e.g., high leverage, debt levels, or risk-taking profiles) tend systematically to connect more frequently with each other, then observed clustering in inefficiency outcomes could be driven by such \emph{non-random link formation} rather than by genuine endogenous peer effects. This concern is conceptually equivalent to the broader identification challenge highlighted in Manski (1993, 2000) under the terms of the \emph{reflection problem}, where endogenous, contextual, and correlated effects must be disentangled.
+
+In our framework, we address this concern in several ways:
+
+\begin{enumerate}
+    \item \textbf{Contextual Effects (Sorting on Observables):} The first-step stochastic cost frontier explicitly conditions on a rich set of bank-specific characteristics---including outputs, input prices, quasi-fixed inputs, and equity---before extracting the residuals. This ensures that systematic link formation based on observable balance-sheet characteristics (such as size, leverage, or capitalization) is already absorbed in the frontier specification. Thus, any remaining dependence in inefficiency cannot be attributed to straightforward sorting on observables.
+
+    \item \textbf{Correlated Effects (Common Shocks and Unobservables):} We include time-fixed effects to capture macroeconomic and regulatory shocks that affect all banks simultaneously. This mitigates the risk that correlated exposures to aggregate shocks, rather than direct peer influence, drive the estimated $\rho$. In addition, the second-step GMM procedure exploits the variance--covariance structure of the inefficiency residuals:
+    \[
+    \mathbb{V}(\varepsilon_t) = (I - \rho W_t)^{-1}(I - \rho W_t')^{-1}\Sigma.
+    \]
+    Identification of $\rho$ therefore relies not on common temporal variation, but on the \emph{cross-sectional structure of bilateral exposures encoded in $W_t$}, conditional on idiosyncratic shocks.
+
+    \item \textbf{Identification Through Network Structure:} The adjacency matrix $W_t$ is constructed from detailed bilateral interbank lending transactions (Form C-18), which are weighted, directed, and non-uniform across banks. As emphasized in the spatial econometrics literature (Elhorst, 2014; Hou et al., 2023), such heterogeneity is crucial for separating endogenous effects from contextual and correlated effects. The Chilean interbank market exhibits substantial variation in peer composition and network position across institutions (see Silva et al., 2016; Silva, 2018), which provides the necessary conditions for identifying $\rho$.
+\end{enumerate}
+
+In short, while we acknowledge that sorting or homophily can generate spurious correlation in networked outcomes, our empirical design substantially mitigates these risks by (i) conditioning on observables, (ii) absorbing common macro-level shocks, and (iii) exploiting the heterogeneity of actual lending relationships for identification. We therefore interpret the estimated $\rho$ as a genuine endogenous peer effect, consistent with recent approaches in network-augmented stochastic frontier models (Hou et al., 2023; Chanci et al., 2024).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\noindent \textbf{on Endogeneity of the Network Matrix $W_t$:}
+
+issue that interbank links, as represented in the adjacency matrix $W_t$, may not be exogenous. Specifically, one may argue that banks select trading partners according to a cost-minimization criterion, such that $W_t$ itself could be jointly determined with cost efficiency. We agree that this is a legitimate concern and one that has been emphasized in the literature on network formation and efficiency (Lux, 2015; Craig and von Peter, 2014; Silva et al., 2016, 2018).
+
+In our empirical design, we mitigate this concern in several ways:
+
+\begin{enumerate}
+    \item \textbf{Stock versus flow distinction.} The adjacency matrix $W_t$ is constructed from \emph{accumulated daily obligations} reported in supervisory Form C-18, i.e., a \emph{stock variable} of exposures at month-end. By contrast, the cost frontier is estimated on the basis of \emph{flow variables} such as interest expenses and input prices from Form MB-2. This temporal and definitional distinction reduces simultaneity between cost minimization and link formation.
+
+    \item \textbf{Normalization of exposures.} Each $W_t$ is row-normalized (and we also test row-and-column normalization). This means that the weights represent \emph{relative shares of counterparties}, not absolute funding costs, mitigating the possibility that lower-cost counterparties drive a mechanical correlation between $W_t$ and current inefficiency.
+
+    \item \textbf{Controls for observables.} The first-step stochastic frontier conditions on outputs, input prices, quasi-fixed inputs, and equity. Systematic drivers of link formation correlated with bank size, capitalization, or risk are therefore absorbed prior to the network step.
+
+    \item \textbf{Common shocks.} Time-fixed effects absorb macroeconomic and regulatory shocks that could simultaneously influence network structure and efficiency.
+\end{enumerate}
+
+Beyond these design features, we implement two robustness strategies:
+
+\begin{itemize}
+    \item First, we estimate specifications using lagged network matrices $W_{t-1}$, which further alleviates simultaneity concerns. Our results are robust to this alternative.
+    \item Second, our GMM estimation exploits the variance–covariance structure
+    \[
+    \mathbb{V}(\varepsilon_t) = (I - \rho W_t)^{-1}(I - \rho W_t')^{-1}\Sigma,
+    \]
+    where identification of $\rho$ derives from cross-sectional heterogeneity in bilateral exposures. As in the spatial econometrics literature (Hou et al., 2023; Elhorst, 2014), this strategy provides a natural way of addressing potential endogeneity of $W_t y$ by relying on higher-order spatial lags as instruments.
+\end{itemize}
+
+In summary, while we recognize that network formation may not be strictly exogenous, our use of stock-based exposures, normalization, extensive controls, and GMM identification makes the endogeneity concern substantially less severe. We interpret our estimated $\rho$ as a genuine endogenous peer effect, in line with recent applications of network-augmented stochastic frontier models (Hou et al., 2023; Chanci et al., 2024).
