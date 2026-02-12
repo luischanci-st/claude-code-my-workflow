@@ -19,7 +19,8 @@ from pathlib import Path
 from datetime import datetime
 
 THRESHOLD = 15
-STATE_DIR = Path("/tmp/claude-log-reminder")
+import tempfile
+STATE_DIR = Path(tempfile.gettempdir()) / "claude-log-reminder"
 
 
 def get_project_dir():
